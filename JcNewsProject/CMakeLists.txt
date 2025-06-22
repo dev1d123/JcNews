@@ -30,6 +30,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         newsvisualizer.h newsvisualizer.cpp newsvisualizer.ui
         fakeresults.h fakeresults.cpp fakeresults.ui
         configuration.h configuration.cpp configuration.ui
+        preferences.h preferences.cpp preferences.ui
 
     )
 # Define target properties for Android with Qt 6 as:
