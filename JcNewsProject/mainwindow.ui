@@ -6,20 +6,258 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1182</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="grupoFiltro">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>160</y>
+      <width>311</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Formulario</string>
+    </property>
+    <widget class="QDateTimeEdit" name="fechaInicio">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>141</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QDateTimeEdit" name="fechaFin">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>100</y>
+       <width>141</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="fechaInicioLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>70</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Desde:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="fechaFinLabel">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>80</y>
+       <width>70</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Hasta:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="fuenteLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>160</y>
+       <width>70</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Fuente:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="fuenteBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>180</y>
+       <width>281</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Fuente 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Fuente 2</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="temasLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>240</y>
+       <width>70</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Temas:</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="grupoTemas">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>260</y>
+       <width>281</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QCheckBox" name="politicaTema">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>97</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Politica</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="culturaTema">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>97</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cultura</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="sociedadTema">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>110</y>
+        <width>97</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Sociedad</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="entretenimientoTema">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>110</y>
+        <width>131</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Entretenimiento</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="deportesTema">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>60</y>
+        <width>97</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Deportes</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="economiaTema">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>10</y>
+        <width>97</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Economia</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="tituloLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>20</y>
+      <width>211</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 800 12pt &quot;Adwaita Sans&quot;;
+color: black;
+font-size: 50px;</string>
+    </property>
+    <property name="text">
+     <string>JCNews</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>100</y>
+      <width>621</width>
+      <height>41</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buscarButton">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>100</y>
+      <width>61</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Buscar</string>
+    </property>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1182</width>
      <height>24</height>
     </rect>
    </property>
