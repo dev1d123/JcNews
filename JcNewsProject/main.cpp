@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "newscomponent.h"
 
 #include <QApplication>
 #include <QLocale>

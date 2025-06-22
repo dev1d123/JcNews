@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+#include "newscomponent.h"
 
 #include <QMainWindow>
 

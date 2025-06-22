@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1182</width>
-    <height>769</height>
+    <height>735</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -228,7 +228,7 @@ font-size: 50px;</string>
      <string>JCNews</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="actualizarLine">
+   <widget class="QLineEdit" name="buscarLine">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -290,7 +290,7 @@ font-size: 50px;</string>
      <string>Actualizado por ultima vez:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="actualizarLine">
     <property name="geometry">
      <rect>
       <x>532</x>
@@ -300,7 +300,7 @@ font-size: 50px;</string>
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="ordenarLabel">
     <property name="geometry">
      <rect>
       <x>770</x>
@@ -313,7 +313,7 @@ font-size: 50px;</string>
      <string>Ordenar por:</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="grupoFecha">
     <property name="geometry">
      <rect>
       <x>770</x>
@@ -325,7 +325,7 @@ font-size: 50px;</string>
     <property name="title">
      <string/>
     </property>
-    <widget class="QRadioButton" name="radioButton">
+    <widget class="QRadioButton" name="fechaArribaRadioB">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -338,7 +338,7 @@ font-size: 50px;</string>
       <string>Fecha ↑</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_2">
+    <widget class="QRadioButton" name="fechaAbajoRadioB">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -352,7 +352,7 @@ font-size: 50px;</string>
      </property>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox_2">
+   <widget class="QGroupBox" name="grupoFuente">
     <property name="geometry">
      <rect>
       <x>890</x>
@@ -364,7 +364,7 @@ font-size: 50px;</string>
     <property name="title">
      <string/>
     </property>
-    <widget class="QRadioButton" name="radioButton_4">
+    <widget class="QRadioButton" name="fuenteZARadioB">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -377,7 +377,7 @@ font-size: 50px;</string>
       <string>Fuente (Z-A)</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_3">
+    <widget class="QRadioButton" name="fuenteAZRadioB">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -391,7 +391,7 @@ font-size: 50px;</string>
      </property>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox_3">
+   <widget class="QGroupBox" name="grupoImportancia">
     <property name="geometry">
      <rect>
       <x>1020</x>
@@ -403,7 +403,7 @@ font-size: 50px;</string>
     <property name="title">
      <string/>
     </property>
-    <widget class="QRadioButton" name="radioButton_6">
+    <widget class="QRadioButton" name="importanciaAbajoRadioB">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -416,7 +416,7 @@ font-size: 50px;</string>
       <string>Importancia ↓</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_5">
+    <widget class="QRadioButton" name="importanciaArribaRadioB">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -430,6 +430,105 @@ font-size: 50px;</string>
      </property>
     </widget>
    </widget>
+   <widget class="QScrollArea" name="noticiasScroll">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>210</y>
+      <width>751</width>
+      <height>471</height>
+     </rect>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>749</width>
+       <height>469</height>
+      </rect>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>731</width>
+        <height>481</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout"/>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>190</y>
+      <width>70</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Titulo</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>190</y>
+      <width>70</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fecha</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>190</y>
+      <width>70</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fuente</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>190</y>
+      <width>70</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Temas</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>160</y>
+      <width>70</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Noticias</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -440,6 +539,12 @@ font-size: 50px;</string>
      <height>24</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuPrincipal">
+    <property name="title">
+     <string>Principal</string>
+    </property>
+   </widget>
+   <addaction name="menuPrincipal"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
