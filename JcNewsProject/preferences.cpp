@@ -6,6 +6,8 @@ Preferences::Preferences(QWidget *parent)
     , ui(new Ui::Preferences)
 {
     ui->setupUi(this);
+    setWindowTitle("Funcionamiento");
+
     connect(ui->atrasButton, &QPushButton::clicked, this, &QDialog::reject);
 
 }

@@ -435,7 +435,7 @@ font-size: 50px;</string>
      <rect>
       <x>380</x>
       <y>210</y>
-      <width>751</width>
+      <width>781</width>
       <height>471</height>
      </rect>
     </property>
@@ -447,7 +447,7 @@ font-size: 50px;</string>
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>749</width>
+       <width>779</width>
        <height>469</height>
       </rect>
      </property>
@@ -456,7 +456,7 @@ font-size: 50px;</string>
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>731</width>
+        <width>761</width>
         <height>481</height>
        </rect>
       </property>

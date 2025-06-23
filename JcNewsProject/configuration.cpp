@@ -9,7 +9,7 @@ configuration::configuration(QWidget *parent)
     , ui(new Ui::configuration)
 {
     ui->setupUi(this);
-
+    setWindowTitle("Configuración");
     connect(ui->atrasButton, &QPushButton::clicked, this, &QDialog::reject);
 
     /*

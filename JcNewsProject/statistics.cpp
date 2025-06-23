@@ -6,6 +6,8 @@ Statistics::Statistics(QWidget *parent)
     , ui(new Ui::Statistics)
 {
     ui->setupUi(this);
+    setWindowTitle("Estadisticas");
+
     connect(ui->atrasButton, &QPushButton::clicked, this, &QDialog::reject);
 
 }

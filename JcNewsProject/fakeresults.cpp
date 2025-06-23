@@ -6,6 +6,8 @@ FakeResults::FakeResults(QWidget *parent)
     , ui(new Ui::FakeResults)
 {
     ui->setupUi(this);
+    setWindowTitle("Resultados Fake");
+
     connect(ui->atrasButton, &QPushButton::clicked, this, &QDialog::reject);
 
 }
