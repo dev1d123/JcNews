@@ -6,6 +6,8 @@ Preferences::Preferences(QWidget *parent)
     , ui(new Ui::Preferences)
 {
     ui->setupUi(this);
+    connect(ui->atrasButton, &QPushButton::clicked, this, &QDialog::reject);
+
 }
 
 Preferences::~Preferences()

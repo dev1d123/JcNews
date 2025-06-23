@@ -6,6 +6,8 @@ NewsVisualizer::NewsVisualizer(QWidget *parent)
     , ui(new Ui::NewsVisualizer)
 {
     ui->setupUi(this);
+    connect(ui->atrasButton, &QPushButton::clicked, this, &QDialog::reject);
+
 }
 
 NewsVisualizer::~NewsVisualizer()

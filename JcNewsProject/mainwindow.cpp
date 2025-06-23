@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "newscomponent.h"
+#include "configuration.h"
 #include "./ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -7,6 +8,15 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    /*
+     * CONEXION CON CONFIGURACION
+     */
+    connect(ui->configuracionButton, &QPushButton::clicked, this, [this]() {
+        configuration* dialog = new configuration(this); // El padre es el componente
+        dialog->exec(); // O usa show() si no quieres bloquear
+    });
+
 
     QWidget* contenedor = ui->noticiasScroll->widget();  // esto asume que se llama contenidoNoticias
 
