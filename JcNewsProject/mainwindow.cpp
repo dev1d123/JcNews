@@ -48,7 +48,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actualizarButton_clicked()
 {
-    QString pythonPath = "python"; // Asegúrate que esté en el PATH
+    QString pythonPath = "C:/Users/USUARIO/Documents/apiScraping/env/Scripts/python.exe";
     QString scriptPath = QDir::currentPath() + "/apiScraping/main.py";
 
     QProcess *process = new QProcess(this);
