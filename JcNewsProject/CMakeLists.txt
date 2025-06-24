@@ -35,6 +35,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         configuration.h configuration.cpp configuration.ui
         preferences.h preferences.cpp preferences.ui
         statistics.h statistics.cpp statistics.ui
+        btree.h btree.cpp
 
     )
 # Define target properties for Android with Qt 6 as:
@@ -86,3 +87,36 @@ install(TARGETS JcNewsProject
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(JcNewsProject)
 endif()
+
+##############################################################################################
+# rutas externas al proyecto
+# Ruta a los scripts de Python
+set(PYTHON_SCRIPTS_DIR "C:/Users/USUARIO/Documents/apiScraping")
+
+# Copiar scripts Python
+file(GLOB PYTHON_SCRIPTS
+    "${PYTHON_SCRIPTS_DIR}/*.py"
+)
+
+# Copiar carpeta de noticias (news_data)
+file(GLOB_RECURSE NEWS_TXTS
+    "${PYTHON_SCRIPTS_DIR}/news_data/*.txt"
+)
+
+# Crear directorio destino dentro del build
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/apiScraping")
+
+# Copiar scripts
+foreach(script ${PYTHON_SCRIPTS})
+    configure_file(${script} ${CMAKE_BINARY_DIR}/apiScraping COPYONLY)
+endforeach()
+
+# Crear subcarpeta para news_data
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/apiScraping/news_data")
+
+# Copiar archivos de noticias
+foreach(txt ${NEWS_TXTS})
+    get_filename_component(filename ${txt} NAME)
+    configure_file(${txt} ${CMAKE_BINARY_DIR}/apiScraping/news_data/${filename} COPYONLY)
+endforeach()
+

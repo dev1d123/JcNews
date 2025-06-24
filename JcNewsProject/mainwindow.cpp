@@ -3,6 +3,12 @@
 #include "configuration.h"
 #include "./ui_mainwindow.h"
 
+#include <QProcess>
+#include <QDir>
+#include <QDebug>
+#include <QMessageBox>
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -39,3 +45,32 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_actualizarButton_clicked()
+{
+    QString pythonPath = "python"; // Asegúrate que esté en el PATH
+    QString scriptPath = QDir::currentPath() + "/apiScraping/main.py";
+
+    QProcess *process = new QProcess(this);
+    process->setProgram(pythonPath);
+    process->setArguments(QStringList() << scriptPath);
+    process->setWorkingDirectory(QDir::currentPath() + "/apiScraping");
+
+    connect(process, &QProcess::readyReadStandardOutput, [process]() {
+        QString output = process->readAllStandardOutput();
+        qDebug() << "Salida del script:" << output;
+    });
+
+    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, [](int exitCode, QProcess::ExitStatus status) {
+                if (status == QProcess::NormalExit && exitCode == 0) {
+                    QMessageBox::information(nullptr, "Éxito", "Script ejecutado correctamente.");
+                } else {
+                    QMessageBox::warning(nullptr, "Error", "Falló la ejecución del script de Python.");
+                }
+            });
+
+    process->start();
+}
+
+
