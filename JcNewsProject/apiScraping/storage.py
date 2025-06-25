@@ -4,7 +4,7 @@ from datetime import datetime
 from scraper import get_full_article
 from utils import sanitize_filename
 
-DATA_DIR = "news_data"
+DATA_DIR = "../../../../noticiasXDXD"
 os.makedirs(DATA_DIR, exist_ok=True)
 
 

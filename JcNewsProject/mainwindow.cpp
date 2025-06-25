@@ -48,29 +48,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actualizarButton_clicked()
 {
-    QString pythonPath = "C:/Users/USUARIO/Documents/apiScraping/env/Scripts/python.exe";
-    QString scriptPath = QDir::currentPath() + "/apiScraping/main.py";
+    QString scriptPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../../apiScraping/main.py");
+    QMessageBox::information(this, "Ejecución", "Ejecutando script:\n" + scriptPath);
 
-    QProcess *process = new QProcess(this);
-    process->setProgram(pythonPath);
-    process->setArguments(QStringList() << scriptPath);
-    process->setWorkingDirectory(QDir::currentPath() + "/apiScraping");
+    QProcess* process = new QProcess(this);
 
-    connect(process, &QProcess::readyReadStandardOutput, [process]() {
-        QString output = process->readAllStandardOutput();
-        qDebug() << "Salida del script:" << output;
+    // Ejecutar con Python
+    process->start("python", QStringList() << scriptPath);
+
+    connect(process, &QProcess::readyReadStandardOutput, [process, this]() {
+        QMessageBox::information(this, "Salida estándar", process->readAllStandardOutput());
+    });
+
+    connect(process, &QProcess::readyReadStandardError, [process, this]() {
+        QMessageBox::information(this, "Error", process->readAllStandardError());
     });
 
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            this, [](int exitCode, QProcess::ExitStatus status) {
-                if (status == QProcess::NormalExit && exitCode == 0) {
-                    QMessageBox::information(nullptr, "Éxito", "Script ejecutado correctamente.");
-                } else {
-                    QMessageBox::warning(nullptr, "Error", "Falló la ejecución del script de Python.");
-                }
+            [process, this](int exitCode, QProcess::ExitStatus exitStatus) {
+                QMessageBox::information(this, "Finalizado",
+                                         "Código de salida: " + QString::number(exitCode) +
+                                             "\nEstado: " + (exitStatus == QProcess::NormalExit ? "Normal" : "Crash"));
+                process->deleteLater();
             });
-
-    process->start();
 }
-
-

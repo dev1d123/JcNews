@@ -4,7 +4,7 @@ import json
 from storage import save_article  
 
 
-DATA_DIR = "news_data"
+DATA_DIR = "../../../../noticiasXDXD"
 JSON_FILENAME = "metadatos_noticias.json"
 API_KEY = "03bdbb096ace4615a704708025189849"
 # cargar las noticias previamente guardadas
@@ -67,6 +67,7 @@ def run_api_process(api_url):
 
 if __name__ == "__main__":
     # solo trae noticia relacionadas al futbol.
+    print("EJECUTANDO MAIN")
     API_URL = f"https://newsapi.org/v2/everything?q=football&language=es&apiKey={API_KEY}"
     run_api_process(API_URL)
     sys.exit(0)
