@@ -5,7 +5,7 @@ import sys
 from storage import save_article  
 
 JSON_FILENAME = "metadatos_noticias.json"
-API_KEY = "pub_543317dccbfe4a3e92cffe1ac4d460b8"
+API_KEY = "pub_14129718c2424ade985d48e9d12db439"
 
 def load_existing_data(path):
     try:
@@ -30,7 +30,7 @@ def process_articles(api_data, existing_data, existing_urls, data_dir):
             new_count += 1
     return new_count
 
-def run_api_process(api_url_base, data_dir, max_articles=100):
+def run_api_process(api_url_base, data_dir, max_articles=10):
     os.makedirs(data_dir, exist_ok=True)
     json_path = os.path.join(data_dir, JSON_FILENAME)
 
