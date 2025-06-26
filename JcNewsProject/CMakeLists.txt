@@ -36,6 +36,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         preferences.h preferences.cpp preferences.ui
         statistics.h statistics.cpp statistics.ui
         btree.h btree.cpp
+        resources.qrc
+        styles.qrc
 
     )
 # Define target properties for Android with Qt 6 as:
