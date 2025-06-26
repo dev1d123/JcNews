@@ -91,27 +91,44 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actualizarButton_clicked()
 {
+    // Obtener ruta del script
     QString scriptPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../../apiScraping/main.py");
-    QMessageBox::information(this, "Ejecución", "Ejecutando script:\n" + scriptPath);
+
+    // Leer la ruta guardada desde QSettings
+    QSettings settings("JcNews", "config");
+    QString rutaGuardada = settings.value("dir_news").toString();
+
+    if (rutaGuardada.isEmpty()) {
+        QMessageBox::warning(this, "Ruta no encontrada", "No se ha configurado una ruta válida en 'dir_news'.");
+        return;
+    }
+
+    QMessageBox::information(this, "Ejecución", "Ejecutando script:\n" + scriptPath + "\nCon destino:\n" + rutaGuardada);
 
     QProcess* process = new QProcess(this);
 
-    // Ejecutar con Python
-    process->start("python", QStringList() << scriptPath);
+    // Ejecutar con Python y pasar la ruta como argumento
+    process->start("python", QStringList() << scriptPath << rutaGuardada);
 
     connect(process, &QProcess::readyReadStandardOutput, [process, this]() {
-        QMessageBox::information(this, "Salida estándar", process->readAllStandardOutput());
+        QString output = process->readAllStandardOutput();
+        if (!output.trimmed().isEmpty()) {
+            QMessageBox::information(this, "Salida estándar", output);
+        }
     });
 
     connect(process, &QProcess::readyReadStandardError, [process, this]() {
-        QMessageBox::information(this, "Error", process->readAllStandardError());
+        QString errors = process->readAllStandardError();
+        if (!errors.trimmed().isEmpty()) {
+            QMessageBox::critical(this, "Error", errors);
+        }
     });
 
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             [process, this](int exitCode, QProcess::ExitStatus exitStatus) {
                 QMessageBox::information(this, "Finalizado",
                                          "Código de salida: " + QString::number(exitCode) +
-                                             "\nEstado: " + (exitStatus == QProcess::NormalExit ? "Normal" : "Crash"));
+                                         "\nEstado: " + (exitStatus == QProcess::NormalExit ? "Normal" : "Crash"));
                 process->deleteLater();
             });
 }

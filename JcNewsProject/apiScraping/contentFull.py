@@ -7,7 +7,7 @@ import re
 from datetime import datetime
 
 # Configuración
-DATA_DIR = "news_data"
+DATA_DIR = "../../../../noticiasXDXD"
 os.makedirs(DATA_DIR, exist_ok=True)
 
 def sanitize_filename(url):
