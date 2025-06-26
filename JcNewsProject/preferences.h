@@ -15,6 +15,10 @@ public:
     explicit Preferences(QWidget *parent = nullptr);
     ~Preferences();
 
+private slots:
+    void seleccionarCarpeta();
+    void guardarPreferencias();
+
 private:
     Ui::Preferences *ui;
 };
