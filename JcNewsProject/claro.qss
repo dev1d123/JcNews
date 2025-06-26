@@ -1,7 +1,6 @@
 QWidget {
     background-color: #f0f0f0;
     color: #000000;
-    font-family: "Segoe UI", sans-serif;
     font-size: 10pt;
 }
 
@@ -14,4 +13,3 @@ QPushButton {
 QPushButton:hover {
     background-color: #d0d0d0;
 }
-

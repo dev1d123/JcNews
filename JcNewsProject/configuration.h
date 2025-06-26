@@ -15,6 +15,9 @@ public:
     explicit configuration(QWidget *parent = nullptr);
     ~configuration();
 
+signals:
+    void preferenciasActualizadas();
+
 private:
     Ui::configuration *ui;
 };

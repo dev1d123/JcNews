@@ -2,7 +2,8 @@
 #include "ui_preferences.h"
 #include <QFileDialog>
 #include <QSettings>
-
+#include <QMessageBox>
+#include "mainwindow.h"
 Preferences::Preferences(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Preferences)
@@ -76,11 +77,63 @@ void Preferences::guardarPreferencias()
     settings.setValue("region", ui->regionBox->currentText());
     settings.setValue("fuente", ui->fuenteBox->currentText());
 
+
+
     // Guardar tema
     if (ui->claroButton->isChecked()) {
         settings.setValue("tema", "claro");
     } else if (ui->oscuroButton->isChecked()) {
         settings.setValue("tema", "oscuro");
     }
+
+    QWidget *w = QApplication::activeWindow();
+    while (w->parentWidget())
+        w = w->parentWidget();
+
+    MainWindow *main = qobject_cast<MainWindow *>(w);
+    if (main) {
+        QString tema = settings.value("tema", "claro").toString();
+        QString rutaTemaQss = (tema == "oscuro")
+            ? ":/styles/oscuro.qss"
+            : ":/styles/claro.qss";
+
+        QString fuente = settings.value("fuente", "Sans").toString();
+        QString rutaFuenteQss;
+
+        if (fuente == "Fuente 1") {
+            rutaFuenteQss = ":/styles/font1.qss";
+        } else if (fuente == "Fuente 2") {
+            rutaFuenteQss = ":/styles/font2.qss";
+        } else {
+            rutaFuenteQss = ":/styles/font3.qss"; // fuente por defecto
+        }
+
+        QString estiloFinal;
+
+        // Cargar tema
+        QFile fileTema(rutaTemaQss);
+        if (fileTema.open(QFile::ReadOnly | QFile::Text)) {
+            estiloFinal += QString::fromUtf8(fileTema.readAll());
+            fileTema.close();
+        } else {
+            qDebug() << "No se pudo cargar el archivo de tema QSS:" << rutaTemaQss;
+        }
+
+        // Cargar fuente
+        QFile fileFuente(rutaFuenteQss);
+        if (fileFuente.open(QFile::ReadOnly | QFile::Text)) {
+            estiloFinal += "\n" + QString::fromUtf8(fileFuente.readAll());
+            fileFuente.close();
+        } else {
+            qDebug() << "No se pudo cargar el archivo de fuente QSS:" << rutaFuenteQss;
+        }
+
+        // Aplicar todo el estilo
+        qApp->setStyleSheet(estiloFinal);
+
+        // Opcional: Mostrar mensaje
+        QMessageBox::information(this, "Ejecución", "La letra usada es: " + fuente);
+    }
+
 }
 

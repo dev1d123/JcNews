@@ -19,6 +19,9 @@ private slots:
     void seleccionarCarpeta();
     void guardarPreferencias();
 
+signals:
+    void actualizarPreferencias();
+
 private:
     Ui::Preferences *ui;
 };

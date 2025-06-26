@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/new/prefix1">
-        <file>claro.qss</file>
-        <file>oscuro.qss</file>
+        <file>Darkeum.qss</file>
     </qresource>
 </RCC>

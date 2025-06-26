@@ -2,18 +2,61 @@
 #include "newscomponent.h"
 #include "configuration.h"
 #include "./ui_mainwindow.h"
-
+#include "preferences.h"
 #include <QProcess>
 #include <QDir>
 #include <QDebug>
 #include <QMessageBox>
-
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    QSettings settings("JcNews", "config");
+
+    QString tema = settings.value("tema", "claro").toString();
+    QString fuente = settings.value("fuente", "Fuente 1").toString();
+
+    QString rutaTema = (tema == "oscuro")
+        ? ":/styles/oscuro.qss"
+        : ":/styles/claro.qss";
+
+    QString rutaFuente;
+
+    if (fuente == "Fuente 1") {
+        rutaFuente = ":/styles/font1.qss";
+    } else if (fuente == "Fuente 2") {
+        rutaFuente = ":/styles/font2.qss";
+    } else {
+        rutaFuente = ":/styles/font3.qss";
+    }
+
+    // Unir estilos
+    QString estiloFinal;
+
+    // Leer estilo del tema
+    QFile fileTema(rutaTema);
+    if (fileTema.open(QFile::ReadOnly | QFile::Text)) {
+        estiloFinal += QString::fromUtf8(fileTema.readAll());
+        fileTema.close();
+    } else {
+        qDebug() << "No se pudo cargar el archivo QSS del tema:" << rutaTema;
+    }
+
+    // Leer estilo de la fuente
+    QFile fileFuente(rutaFuente);
+    if (fileFuente.open(QFile::ReadOnly | QFile::Text)) {
+        estiloFinal += "\n" + QString::fromUtf8(fileFuente.readAll());
+        fileFuente.close();
+    } else {
+        qDebug() << "No se pudo cargar el archivo QSS de la fuente:" << rutaFuente;
+    }
+
+    // Aplicar estilo combinado
+    qApp->setStyleSheet(estiloFinal);
 
     /*
      * CONEXION CON CONFIGURACION

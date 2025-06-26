@@ -2,5 +2,9 @@
     <qresource prefix="/styles">
         <file>oscuro.qss</file>
         <file>claro.qss</file>
+        <file>Darkeum.qss</file>
+        <file>font1.qss</file>
+        <file>font2.qss</file>
+        <file>font3.qss</file>
     </qresource>
 </RCC>

@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">Darkeum.qss</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="grupoFiltro">
