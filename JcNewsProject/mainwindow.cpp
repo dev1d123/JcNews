@@ -9,6 +9,12 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QDateTime>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonParseError>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -25,64 +31,30 @@ MainWindow::MainWindow(QWidget *parent)
         ? ":/styles/oscuro.qss"
         : ":/styles/claro.qss";
 
-    QString rutaFuente;
+    QString rutaFuente = ":/styles/font1.qss";
+    if (fuente == "Fuente 2") rutaFuente = ":/styles/font2.qss";
+    else if (fuente == "Fuente 3") rutaFuente = ":/styles/font3.qss";
 
-    if (fuente == "Fuente 1") {
-        rutaFuente = ":/styles/font1.qss";
-    } else if (fuente == "Fuente 2") {
-        rutaFuente = ":/styles/font2.qss";
-    } else {
-        rutaFuente = ":/styles/font3.qss";
-    }
-
-    // Unir estilos
     QString estiloFinal;
 
-    // Leer estilo del tema
     QFile fileTema(rutaTema);
     if (fileTema.open(QFile::ReadOnly | QFile::Text)) {
         estiloFinal += QString::fromUtf8(fileTema.readAll());
         fileTema.close();
-    } else {
-        qDebug() << "No se pudo cargar el archivo QSS del tema:" << rutaTema;
     }
 
-    // Leer estilo de la fuente
     QFile fileFuente(rutaFuente);
     if (fileFuente.open(QFile::ReadOnly | QFile::Text)) {
         estiloFinal += "\n" + QString::fromUtf8(fileFuente.readAll());
         fileFuente.close();
-    } else {
-        qDebug() << "No se pudo cargar el archivo QSS de la fuente:" << rutaFuente;
     }
 
-    // Aplicar estilo combinado
     qApp->setStyleSheet(estiloFinal);
 
-    /*
-     * CONEXION CON CONFIGURACION
-     */
     connect(ui->configuracionButton, &QPushButton::clicked, this, [this]() {
-        configuration* dialog = new configuration(this); // El padre es el componente
-        dialog->exec(); // O usa show() si no quieres bloquear
+        configuration* dialog = new configuration(this);
+        dialog->exec();
     });
-
-
-    QWidget* contenedor = ui->noticiasScroll->widget();  // esto asume que se llama contenidoNoticias
-
-    QVBoxLayout* layout = qobject_cast<QVBoxLayout*>(contenedor->layout());
-    if (!layout) {
-        layout = new QVBoxLayout(contenedor);
-        contenedor->setLayout(layout);
-    }
-
-    for (int i = 0; i < 10; ++i) {
-        NewsComponent* comp = new NewsComponent(this);
-        comp->setFixedHeight(150);  // Altura de cada noticia
-        layout->addWidget(comp);
-    }
-
-    layout->addStretch();
 }
 
 MainWindow::~MainWindow()
@@ -90,13 +62,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-
-
 void MainWindow::on_actualizarButton_clicked()
 {
     QString scriptPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../../apiScraping/main.py");
-
     QSettings settings("JcNews", "config");
     QString rutaGuardada = settings.value("dir_news").toString();
 
@@ -125,15 +93,94 @@ void MainWindow::on_actualizarButton_clicked()
     });
 
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            [process, this](int exitCode, QProcess::ExitStatus exitStatus) {
-                QMessageBox::information(this, "Finalizado",
-                                         "Código de salida: " + QString::number(exitCode) +
-                                         "\nEstado: " + (exitStatus == QProcess::NormalExit ? "Normal" : "Crash"));
-                process->deleteLater();
+            [process, this, rutaGuardada](int exitCode, QProcess::ExitStatus exitStatus) {
+        QMessageBox::information(this, "Finalizado",
+                                 "Código de salida: " + QString::number(exitCode) +
+                                 "\nEstado: " + (exitStatus == QProcess::NormalExit ? "Normal" : "Crash"));
+        process->deleteLater();
 
-                // 🕒 Actualizar el QLineEdit con fecha y hora
-                QDateTime now = QDateTime::currentDateTime();
-                ui->actualizarLine->setText(now.toString("dd/MM/yyyy hh:mm:ss"));
-            });
+        QDateTime now = QDateTime::currentDateTime();
+        ui->actualizarLine->setText(now.toString("dd/MM/yyyy hh:mm:ss"));
 
+        QString jsonPath = QDir(rutaGuardada).filePath("metadatos_noticias.json");
+        QFile file(jsonPath);
+        if (!file.open(QIODevice::ReadOnly)) {
+            std::cerr << "No se pudo abrir el archivo JSON: " << jsonPath.toStdString() << std::endl;
+            return;
+        }
+
+        QByteArray jsonData = file.readAll();
+        file.close();
+
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
+        if (parseError.error != QJsonParseError::NoError) {
+            std::cerr << "Error al parsear JSON: " << parseError.errorString().toStdString() << std::endl;
+            return;
+        }
+
+        QWidget* contenedor = ui->noticiasScroll->widget();
+        QVBoxLayout* layout = qobject_cast<QVBoxLayout*>(contenedor->layout());
+        if (!layout) {
+            layout = new QVBoxLayout(contenedor);
+            contenedor->setLayout(layout);
+        }
+
+        // Limpiar widgets previos
+        QLayoutItem* child;
+        while ((child = layout->takeAt(0)) != nullptr) {
+            if (QWidget* widget = child->widget()) {
+                widget->deleteLater();
+            }
+            delete child;
+        }
+        QMap<QString, QString> traduccionesTemas = {
+            {"business", "negocios"},
+            {"sports", "deportes"},
+            {"technology", "tecnología"},
+            {"politics", "política"},
+            {"health", "salud"},
+            {"science", "ciencia"},
+            {"entertainment", "entretenimiento"},
+            {"world", "mundo"},
+            {"economy", "economía"},
+            {"education", "educación"},
+            {"travel", "viajes"},
+            {"food", "comida"},
+            {"environment", "medio ambiente"},
+            {"top", "principales"},
+            {"finance", "finanzas"},
+            {"law", "ley"},
+            {"culture", "cultura"},
+            {"fashion", "moda"},
+            {"crime", "crimen"},
+            {"weather", "clima"},
+            {"real estate", "bienes raíces"}
+        };
+
+        QJsonArray noticias = doc.array();
+        for (const QJsonValue& value : noticias) {
+            QJsonObject obj = value.toObject();
+            NewsComponent* comp = new NewsComponent(this);
+
+            comp->setFixedHeight(150);
+            comp->setDate(QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate));
+            comp->setFuente(obj["fuente"].toString());
+            comp->setTitle(obj["titulo"].toString());
+
+            QStringList temasTraducidos;
+            QJsonArray temasJsonArray = obj["temas"].toArray();
+            for (const QJsonValue& tema : temasJsonArray) {
+                QString temaIngles = tema.toString();
+                QString temaEsp = traduccionesTemas.value(temaIngles, temaIngles); // si no se encuentra, deja el original
+                temasTraducidos << temaEsp;
+            }
+            QString temasConcatenados = temasTraducidos.join(", ");
+            comp->setTema(temasConcatenados);
+
+            layout->addWidget(comp);
+        }
+
+        layout->addStretch();
+    });
 }

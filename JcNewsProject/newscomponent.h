@@ -13,6 +13,11 @@ class NewsComponent : public QWidget
 
 public:
     explicit NewsComponent(QWidget *parent = nullptr);
+    void setDate(const QDateTime& date);
+    void setFuente(const QString& fuente);
+    void setTema(const QString& tema);
+    void setTitle(const QString& titulo);
+
     ~NewsComponent();
 
 private:

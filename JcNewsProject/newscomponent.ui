@@ -6,29 +6,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>748</width>
-    <height>92</height>
+    <width>765</width>
+    <height>138</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QDateTimeEdit" name="dateTimeEdit">
+  <widget class="QDateTimeEdit" name="dateEdit">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>20</y>
+     <x>260</x>
+     <y>40</y>
      <width>141</width>
      <height>41</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_2">
+  <widget class="QLineEdit" name="fuenteEdit">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>20</y>
-     <width>191</width>
+     <x>400</x>
+     <y>40</y>
+     <width>151</width>
      <height>41</height>
     </rect>
    </property>
@@ -36,26 +36,26 @@
     <string>Fuente</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_3">
+  <widget class="QLineEdit" name="temaEdit">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>20</y>
-     <width>141</width>
-     <height>41</height>
+     <x>550</x>
+     <y>10</y>
+     <width>151</width>
+     <height>111</height>
     </rect>
    </property>
    <property name="text">
     <string>Tema</string>
    </property>
   </widget>
-  <widget class="QTextEdit" name="textEdit">
+  <widget class="QTextEdit" name="titleEdit">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>191</width>
-     <height>70</height>
+     <width>251</width>
+     <height>111</height>
     </rect>
    </property>
    <property name="html">
@@ -72,10 +72,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QPushButton" name="newsButton">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>30</y>
-     <width>31</width>
-     <height>27</height>
+     <x>700</x>
+     <y>40</y>
+     <width>41</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">

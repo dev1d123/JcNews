@@ -1,46 +1,47 @@
 import os
-import json
 from datetime import datetime
 from scraper import get_full_article
 from utils import sanitize_filename
 
 def save_article(article_data, existing_urls, data_dir):
-    url = article_data['url']
+    url = article_data.get('link') or article_data.get('url')
+    if not url:
+        return None
+
     if url in existing_urls:
-        print(f"Noticia ya existe: {article_data['title']}")
+        print(f"Noticia ya existe: {article_data.get('title', 'Sin título')}")
         return None
 
     full_content = get_full_article(url)
     if not full_content:
         return None
 
-    # generar nombre de archivo seguro
     txt_filename = sanitize_filename(url)
     txt_path = os.path.join(data_dir, txt_filename)
 
-    # preparar el contenido del archivo
-    txt_content = f"""Título: {article_data['title']}
-Fuente: {article_data['source']['name']}
+    txt_content = f"""Título: {article_data.get('title', 'Sin título')}
+Fuente: {article_data.get('source_name', 'Desconocida')}
 URL: {url}
-Fecha: {article_data['publishedAt']}
+Fecha: {article_data.get('pubDate', 'Desconocida')}
 ---
 {full_content}
 """
 
-    # abrir el txt y llenarlo de información
     with open(txt_path, 'w', encoding='utf-8') as f:
         f.write(txt_content)
 
     return {
         "id": url,
-        "titulo": article_data['title'],
-        "fuente": article_data['source']['name'],
-        "autor": article_data.get('author'),
-        "fecha": article_data['publishedAt'],
+        "titulo": article_data.get('title'),
+        "fuente": article_data.get('source_name'),
+        "autor": (article_data.get('creator') or [None])[0],
+        "fecha": article_data.get('pubDate'),
         "url": url,
-        "url_imagen": article_data.get('urlToImage'),
+        "url_imagen": article_data.get('image_url'),
         "ruta_contenido": txt_path,
-        "descripcion": article_data['description'],
-        "fecha_procesamiento": datetime.now().isoformat()
+        "descripcion": article_data.get('description'),
+        "fecha_procesamiento": datetime.now().isoformat(),
+        "temas": article_data.get('category') or [],
+        "prioridad": article_data.get('source_priority', '0')  # default '0' si no existe
     }
 
