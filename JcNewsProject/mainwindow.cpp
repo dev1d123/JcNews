@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QSettings>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -89,12 +90,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+
+
 void MainWindow::on_actualizarButton_clicked()
 {
-    // Obtener ruta del script
     QString scriptPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../../apiScraping/main.py");
 
-    // Leer la ruta guardada desde QSettings
     QSettings settings("JcNews", "config");
     QString rutaGuardada = settings.value("dir_news").toString();
 
@@ -106,8 +108,6 @@ void MainWindow::on_actualizarButton_clicked()
     QMessageBox::information(this, "Ejecución", "Ejecutando script:\n" + scriptPath + "\nCon destino:\n" + rutaGuardada);
 
     QProcess* process = new QProcess(this);
-
-    // Ejecutar con Python y pasar la ruta como argumento
     process->start("python", QStringList() << scriptPath << rutaGuardada);
 
     connect(process, &QProcess::readyReadStandardOutput, [process, this]() {
@@ -130,5 +130,10 @@ void MainWindow::on_actualizarButton_clicked()
                                          "Código de salida: " + QString::number(exitCode) +
                                          "\nEstado: " + (exitStatus == QProcess::NormalExit ? "Normal" : "Crash"));
                 process->deleteLater();
+
+                // 🕒 Actualizar el QLineEdit con fecha y hora
+                QDateTime now = QDateTime::currentDateTime();
+                ui->actualizarLine->setText(now.toString("dd/MM/yyyy hh:mm:ss"));
             });
+
 }

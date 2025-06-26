@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include "newscomponent.h"
-
+#include <QString>
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -20,7 +20,6 @@ public:
 
 private slots:
     void on_actualizarButton_clicked();
-
 private:
     Ui::MainWindow *ui;
 };
