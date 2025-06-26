@@ -35,11 +35,13 @@ Fecha: {article_data.get('pubDate', 'Desconocida')}
         "titulo": article_data.get('title'),
         "fuente": article_data.get('source_name'),
         "autor": (article_data.get('creator') or [None])[0],
-		"fecha": article_data.get('pubDate'),
+        "fecha": article_data.get('pubDate'),
         "url": url,
         "url_imagen": article_data.get('image_url'),
         "ruta_contenido": txt_path,
         "descripcion": article_data.get('description'),
-        "fecha_procesamiento": datetime.now().isoformat()
+        "fecha_procesamiento": datetime.now().isoformat(),
+        "temas": article_data.get('category') or [],
+        "prioridad": article_data.get('source_priority', '0')  # default '0' si no existe
     }
 
