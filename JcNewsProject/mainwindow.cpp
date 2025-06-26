@@ -134,6 +134,29 @@ void MainWindow::on_actualizarButton_clicked()
             }
             delete child;
         }
+        QMap<QString, QString> traduccionesTemas = {
+            {"business", "negocios"},
+            {"sports", "deportes"},
+            {"technology", "tecnología"},
+            {"politics", "política"},
+            {"health", "salud"},
+            {"science", "ciencia"},
+            {"entertainment", "entretenimiento"},
+            {"world", "mundo"},
+            {"economy", "economía"},
+            {"education", "educación"},
+            {"travel", "viajes"},
+            {"food", "comida"},
+            {"environment", "medio ambiente"},
+            {"top", "principales"},
+            {"finance", "finanzas"},
+            {"law", "ley"},
+            {"culture", "cultura"},
+            {"fashion", "moda"},
+            {"crime", "crimen"},
+            {"weather", "clima"},
+            {"real estate", "bienes raíces"}
+        };
 
         QJsonArray noticias = doc.array();
         for (const QJsonValue& value : noticias) {
@@ -143,8 +166,17 @@ void MainWindow::on_actualizarButton_clicked()
             comp->setFixedHeight(150);
             comp->setDate(QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate));
             comp->setFuente(obj["fuente"].toString());
-            comp->setTema(obj["descripcion"].toString());
             comp->setTitle(obj["titulo"].toString());
+
+            QStringList temasTraducidos;
+            QJsonArray temasJsonArray = obj["temas"].toArray();
+            for (const QJsonValue& tema : temasJsonArray) {
+                QString temaIngles = tema.toString();
+                QString temaEsp = traduccionesTemas.value(temaIngles, temaIngles); // si no se encuentra, deja el original
+                temasTraducidos << temaEsp;
+            }
+            QString temasConcatenados = temasTraducidos.join(", ");
+            comp->setTema(temasConcatenados);
 
             layout->addWidget(comp);
         }
