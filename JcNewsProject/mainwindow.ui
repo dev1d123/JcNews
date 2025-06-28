@@ -104,7 +104,7 @@
      </item>
      <item>
       <property name="text">
-       <string>Fuente 2</string>
+       <string/>
       </property>
      </item>
     </widget>
@@ -127,7 +127,7 @@
        <x>10</x>
        <y>260</y>
        <width>281</width>
-       <height>171</height>
+       <height>201</height>
       </rect>
      </property>
      <property name="title">
@@ -211,6 +211,32 @@
        <string>Economia</string>
       </property>
      </widget>
+     <widget class="QCheckBox" name="otrosTema">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>160</y>
+        <width>131</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Otros</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="aplicarFiltros">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>470</y>
+       <width>171</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Aplicar filtros</string>
+     </property>
     </widget>
    </widget>
    <widget class="QLabel" name="tituloLabel">

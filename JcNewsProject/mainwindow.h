@@ -3,7 +3,7 @@
 #include "newscomponent.h"
 #include <QString>
 #include <QMainWindow>
-
+#include <QJsonArray>
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -22,5 +22,8 @@ private slots:
     void on_actualizarButton_clicked();
 private:
     Ui::MainWindow *ui;
+    QJsonArray noticiasOriginales;
+    void filtrarNoticias();
+    QString clasificarTemaPorDescripcion(const QString& descripcion, const QMap<QString, QStringList>& palabrasClavePorTema);
 };
 #endif // MAINWINDOW_H
