@@ -127,12 +127,49 @@ QString MainWindow::clasificarTemaPorDescripcion(const QString& descripcion, con
 }
 
 
+void MainWindow::limpiarOrdenamientosRadioButtons()
+{
+    // Función lambda para desactivar cada QRadioButton
+    auto desactivarRadio = [](QRadioButton* rb) {
+        rb->setAutoExclusive(false);   // Desactiva exclusividad temporalmente
+        rb->setChecked(false);         // Desmarca el botón
+        rb->setAutoExclusive(true);    // Restaura exclusividad
+    };
+
+    // Limpiar radio buttons de fecha
+    desactivarRadio(ui->fechaArribaRadioB);
+    desactivarRadio(ui->fechaAbajoRadioB);
+
+    // Limpiar radio buttons de fuente
+    desactivarRadio(ui->fuenteAZRadioB);
+    desactivarRadio(ui->fuenteZARadioB);
+
+    // Limpiar radio buttons de importancia
+    desactivarRadio(ui->importanciaArribaRadioB);
+    desactivarRadio(ui->importanciaAbajoRadioB);
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(ui->filtrarButton, &QPushButton::clicked, this, [this]() {
+        limpiarOrdenamientosRadioButtons();
+    });
+
+
+
+    // Conexiones para ordenamiento al cambiar los radio buttons
+    connect(ui->fechaArribaRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
+    connect(ui->fechaAbajoRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
+
+    connect(ui->fuenteAZRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
+    connect(ui->fuenteZARadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
+
+    connect(ui->importanciaArribaRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
+    connect(ui->importanciaAbajoRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
+
 
     QSettings settings("JcNews", "config");
 
@@ -270,10 +307,12 @@ void MainWindow::on_actualizarButton_clicked()
 
 void MainWindow::filtrarNoticias()
 {
+    // 1. Rango de fechas y fuente seleccionada
     QDateTime fechaInicio = ui->fechaInicio->dateTime();
     QDateTime fechaFin = ui->fechaFin->dateTime();
     QString fuenteSeleccionada = ui->fuenteBox->currentText();
 
+    // 2. Temas seleccionados
     QSet<QString> temasSeleccionados;
     if (ui->politicaTema->isChecked()) temasSeleccionados << "política";
     if (ui->culturaTema->isChecked()) temasSeleccionados << "cultura";
@@ -284,6 +323,7 @@ void MainWindow::filtrarNoticias()
 
     bool incluirOtros = ui->otrosTema->isChecked();
 
+    // 3. Traducciones
     QMap<QString, QString> traduccionesTemas = {
         {"business", "negocios"}, {"sports", "deportes"}, {"technology", "tecnología"},
         {"politics", "política"}, {"health", "salud"}, {"science", "ciencia"},
@@ -295,6 +335,7 @@ void MainWindow::filtrarNoticias()
         {"society", "sociedad"}
     };
 
+    // 4. Limpiar layout actual
     QWidget* contenedor = ui->noticiasScroll->widget();
     QVBoxLayout* layout = qobject_cast<QVBoxLayout*>(contenedor->layout());
     if (!layout) {
@@ -308,6 +349,8 @@ void MainWindow::filtrarNoticias()
         delete child;
     }
 
+    // 5. Filtrar noticias
+    QList<QJsonObject> noticiasFiltradas;
     for (const QJsonValue& value : noticiasOriginales) {
         QJsonObject obj = value.toObject();
         QDateTime fechaNoticia = QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate);
@@ -318,6 +361,7 @@ void MainWindow::filtrarNoticias()
         QJsonArray temasJson = obj["temas"].toArray();
         QString descripcion = obj["descripcion"].toString();
 
+        // Paso 3: corregir tema si es genérico
         bool tieneTemaGenerico = false;
         for (const QJsonValue& tema : temasJson) {
             QString t = tema.toString().toLower();
@@ -330,18 +374,20 @@ void MainWindow::filtrarNoticias()
         if (tieneTemaGenerico) {
             QString temaDetectado = clasificarTemaPorDescripcion(descripcion, palabrasClavePorTema);
             if (!temaDetectado.isEmpty()) {
-                temasJson = QJsonArray();  //elegit el mejor tema
+                temasJson = QJsonArray();
                 temasJson.append(temaDetectado);
-                qDebug() << "Tema reasignado a:" << temaDetectado << " para título:" << obj["titulo"].toString();
+                obj["temas"] = temasJson;
             }
         }
 
+        // Traducción para evaluación
         QStringList temasTraducidos;
         for (const QJsonValue& tema : temasJson) {
             QString temaEsp = traduccionesTemas.value(tema.toString(), tema.toString());
             temasTraducidos << temaEsp;
         }
 
+        // Filtrado por tema
         bool coincide = false;
         for (const QString& tema : temasTraducidos) {
             if (temasSeleccionados.contains(tema)) {
@@ -353,9 +399,48 @@ void MainWindow::filtrarNoticias()
         if (!coincide && !incluirOtros) continue;
         if (!temasSeleccionados.isEmpty() && !coincide && incluirOtros) continue;
 
+        noticiasFiltradas.append(obj);
+    }
+
+    // 6. Ordenamiento
+    std::sort(noticiasFiltradas.begin(), noticiasFiltradas.end(), [this](const QJsonObject& a, const QJsonObject& b) {
+        // Orden por fecha
+        if (ui->fechaArribaRadioB->isChecked() || ui->fechaAbajoRadioB->isChecked()) {
+            QDateTime fa = QDateTime::fromString(a["fecha"].toString(), Qt::ISODate);
+            QDateTime fb = QDateTime::fromString(b["fecha"].toString(), Qt::ISODate);
+            return ui->fechaArribaRadioB->isChecked() ? fa < fb : fa > fb;
+        }
+
+        // Orden por fuente
+        if (ui->fuenteAZRadioB->isChecked() || ui->fuenteZARadioB->isChecked()) {
+            QString sa = a["fuente"].toString().toLower();
+            QString sb = b["fuente"].toString().toLower();
+            return ui->fuenteAZRadioB->isChecked() ? sa < sb : sa > sb;
+        }
+
+        // Orden por prioridad (número entero)
+        if (ui->importanciaArribaRadioB->isChecked() || ui->importanciaAbajoRadioB->isChecked()) {
+            int ta = a["prioridad"].toInt();
+            int tb = b["prioridad"].toInt();
+            return ui->importanciaArribaRadioB->isChecked() ? ta < tb : ta > tb;
+        }
+
+        return false;
+    });
+
+
+    // 7. Mostrar noticias ordenadas
+    for (const QJsonObject& obj : noticiasFiltradas) {
+        QJsonArray temasJson = obj["temas"].toArray();
+        QStringList temasTraducidos;
+        for (const QJsonValue& tema : temasJson) {
+            QString temaEsp = traduccionesTemas.value(tema.toString(), tema.toString());
+            temasTraducidos << temaEsp;
+        }
+
         NewsComponent* comp = new NewsComponent(this);
         comp->setFixedHeight(150);
-        comp->setDate(fechaNoticia);
+        comp->setDate(QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate));
         comp->setFuente(obj["fuente"].toString());
         comp->setTitle(obj["titulo"].toString());
         comp->setTema(temasTraducidos.join(", "));
@@ -365,4 +450,3 @@ void MainWindow::filtrarNoticias()
 
     layout->addStretch();
 }
-

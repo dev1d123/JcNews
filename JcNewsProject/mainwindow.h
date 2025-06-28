@@ -25,5 +25,6 @@ private:
     QJsonArray noticiasOriginales;
     void filtrarNoticias();
     QString clasificarTemaPorDescripcion(const QString& descripcion, const QMap<QString, QStringList>& palabrasClavePorTema);
+    void limpiarOrdenamientosRadioButtons(); // ✅ Limpia todos los QRadioButton de ordenamiento
 };
 #endif // MAINWINDOW_H
