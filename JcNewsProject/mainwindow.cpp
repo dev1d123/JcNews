@@ -439,6 +439,12 @@ void MainWindow::filtrarNoticias()
         }
 
         NewsComponent* comp = new NewsComponent(this);
+        //agregar el id de la noticia!
+        comp->setIdUrl(obj["id"].toString());
+        comp->setTextPath(obj["ruta_contenido"].toString());
+        comp->setImgUrl(obj["url_imagen"].toString());
+
+
         comp->setFixedHeight(150);
         comp->setDate(QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate));
         comp->setFuente(obj["fuente"].toString());
