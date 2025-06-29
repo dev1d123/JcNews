@@ -3,7 +3,7 @@
 #include "configuration.h"
 #include "./ui_mainwindow.h"
 #include "preferences.h"
-
+#include "trie.h"
 #include <QProcess>
 #include <QDir>
 #include <QDebug>
@@ -16,7 +16,14 @@
 #include <QJsonArray>
 #include <QJsonParseError>
 #include <iostream>
+#include <QRegularExpression>
+#include <QVector>
+#include <QMouseEvent>
 
+QMap<QString, QList<QJsonObject>> indiceInvertido;
+
+QVector<QString> titulos;
+Trie* trie = new Trie();
 
 QMap<QString, QStringList> palabrasClavePorTema = {
     {"política", {
@@ -126,6 +133,132 @@ QString MainWindow::clasificarTemaPorDescripcion(const QString& descripcion, con
     return (maxConteo >= 2) ? mejorTema : "";
 }
 
+void MainWindow::buscarPorTexto()
+{
+    QString texto = ui->buscarLine->text().toLower();
+    if (texto.isEmpty()) {
+        filtrarNoticias();
+        return;
+    }
+
+    QStringList tokens = texto.split(QRegularExpression("[\\W_]+"), Qt::SkipEmptyParts);
+    QSet<QJsonObject> resultados;
+
+    // Acumuladores para debug
+    QString debugInfo = "Tokens buscados:\n";
+
+    // Umbral mínimo de tokens que debe coincidir por noticia
+    int umbralMinimo = tokens.size() - 3;
+    // Mapa para contar cuántos tokens coinciden por cada noticia
+    QMap<QString, QPair<QJsonObject, int>> conteoCoincidencias;
+
+    for (const QString& token : tokens) {
+        const QList<QJsonObject>& noticias = indiceInvertido.value(token);
+        debugInfo += QString("Token: '%1' -> %2 coincidencias\n").arg(token).arg(noticias.size());
+
+        for (const QJsonObject& obj : noticias) {
+            QString id = obj["id"].toString();  // Asegúrate de que cada noticia tenga un campo "id" único
+            conteoCoincidencias[id].first = obj;
+            conteoCoincidencias[id].second += 1;
+        }
+    }
+
+    // Filtrar por umbral mínimo
+    for (const auto& par : std::as_const(conteoCoincidencias)) {
+        if (par.second >= umbralMinimo) {
+            resultados.insert(par.first);
+        }
+    }
+
+    debugInfo += QString("\nTotal noticias encontradas (umbral >= %1): %2")
+                    .arg(umbralMinimo)
+                    .arg(resultados.size());
+
+    QMessageBox::information(this, "Debug Búsqueda", debugInfo);
+
+    // Mostrar resultados
+    QWidget* contenedor = ui->noticiasScroll->widget();
+    QVBoxLayout* layout = qobject_cast<QVBoxLayout*>(contenedor->layout());
+    if (!layout) {
+        layout = new QVBoxLayout(contenedor);
+        contenedor->setLayout(layout);
+    }
+
+    QLayoutItem* child;
+    while ((child = layout->takeAt(0)) != nullptr) {
+        if (QWidget* widget = child->widget()) widget->deleteLater();
+        delete child;
+    }
+
+    QMap<QString, QString> traduccionesTemas = {
+        {"business", "negocios"}, {"sports", "deportes"}, {"technology", "tecnología"},
+        {"politics", "política"}, {"health", "salud"}, {"science", "ciencia"},
+        {"entertainment", "entretenimiento"}, {"world", "mundo"}, {"economy", "economía"},
+        {"education", "educación"}, {"travel", "viajes"}, {"food", "comida"},
+        {"environment", "medio ambiente"}, {"top", "principales"}, {"finance", "finanzas"},
+        {"law", "ley"}, {"culture", "cultura"}, {"fashion", "moda"},
+        {"crime", "crimen"}, {"weather", "clima"}, {"real estate", "bienes raíces"},
+        {"society", "sociedad"}
+    };
+
+    for (const QJsonObject& obj : resultados) {
+        QJsonArray temasJson = obj["temas"].toArray();
+        QStringList temasTraducidos;
+        for (const QJsonValue& tema : temasJson) {
+            QString temaEsp = traduccionesTemas.value(tema.toString(), tema.toString());
+            temasTraducidos << temaEsp;
+        }
+
+        NewsComponent* comp = new NewsComponent(this);
+        comp->setIdUrl(obj["id"].toString());
+        comp->setTextPath(obj["ruta_contenido"].toString());
+        comp->setImgUrl(obj["url_imagen"].toString());
+        comp->setFixedHeight(150);
+        comp->setDate(QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate));
+        comp->setFuente(obj["fuente"].toString());
+        comp->setTitle(obj["titulo"].toString());
+        comp->setTema(temasTraducidos.join(", "));
+
+        layout->addWidget(comp);
+    }
+
+    layout->addStretch();
+}
+
+void MainWindow::actualizarSugerencias(const QString& texto) {
+    if (texto.isEmpty()) {
+        sugerenciasList->hide();
+        return;
+    }
+
+    QStringList resultados;
+    trie->searchPrefix(texto, resultados);  // buscar títulos con ese prefijo
+
+    if (resultados.isEmpty()) {
+        sugerenciasList->hide();
+        return;
+    }
+
+    // Limpiar y agregar sugerencias
+    sugerenciasList->clear();
+    sugerenciasList->addItems(resultados);
+
+    // Posicionar lista justo debajo del QLineEdit
+    QPoint pos = ui->buscarLine->mapToGlobal(QPoint(0, ui->buscarLine->height()));
+    sugerenciasList->move(pos);
+    sugerenciasList->resize(ui->buscarLine->width(), 100);  // altura ajustable
+    sugerenciasList->show();
+    sugerenciasList->raise();
+    sugerenciasList->setFocus();
+
+}
+
+void MainWindow::seleccionarSugerencia(QListWidgetItem* item) {
+    ui->buscarLine->setText(item->text());
+    sugerenciasList->hide();
+    ui->buscarLine->setFocus();
+}
+
 
 void MainWindow::limpiarOrdenamientosRadioButtons()
 {
@@ -148,6 +281,27 @@ void MainWindow::limpiarOrdenamientosRadioButtons()
     desactivarRadio(ui->importanciaArribaRadioB);
     desactivarRadio(ui->importanciaAbajoRadioB);
 }
+bool MainWindow::eventFilter(QObject* obj, QEvent* event) {
+    if (event->type() == QEvent::MouseButtonPress && sugerenciasList->isVisible()) {
+        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+        QPoint globalPos = mouseEvent->globalPos();
+
+        // Verificar si se hizo clic fuera del input o lista
+        if (!ui->buscarLine->geometry().contains(ui->buscarLine->mapFromGlobal(globalPos)) &&
+            !sugerenciasList->geometry().contains(sugerenciasList->mapFromGlobal(globalPos))) {
+            sugerenciasList->hide();
+        }
+    }
+
+    // Si el QLineEdit pierde foco
+    if ((obj == ui->buscarLine || obj == sugerenciasList) && event->type() == QEvent::FocusOut) {
+        sugerenciasList->hide();
+    }
+
+    return QMainWindow::eventFilter(obj, event);
+}
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -157,9 +311,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->filtrarButton, &QPushButton::clicked, this, [this]() {
         limpiarOrdenamientosRadioButtons();
     });
-
-
-
     // Conexiones para ordenamiento al cambiar los radio buttons
     connect(ui->fechaArribaRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
     connect(ui->fechaAbajoRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
@@ -169,6 +320,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->importanciaArribaRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
     connect(ui->importanciaAbajoRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
+
+    connect(ui->buscarButton, &QPushButton::clicked, this, &MainWindow::buscarPorTexto);
+
+    trie = new Trie();  // Ya lo cargas en on_actualizarButton_clicked
+
+    sugerenciasList = new QListWidget(this);
+    sugerenciasList->hide();
+    sugerenciasList->setWindowFlags(Qt::ToolTip);  // 🟡 Mejor que Qt::Popup para permitir foco y clicks
+    sugerenciasList->setFocusPolicy(Qt::StrongFocus);  // ✅ Necesita recibir foco
+    sugerenciasList->setMouseTracking(true);
+
+
+    // Conectar eventos
+    connect(ui->buscarLine, &QLineEdit::textChanged, this, &MainWindow::actualizarSugerencias);
+    connect(sugerenciasList, &QListWidget::itemClicked, this, &MainWindow::seleccionarSugerencia);
+    connect(sugerenciasList, &QListWidget::itemActivated, this, &MainWindow::seleccionarSugerencia); // tecla Enter
+
+    // Ocultar sugerencias si pierde el foco
+    qApp->installEventFilter(this);                // Detectar clics globales
+    ui->buscarLine->installEventFilter(this);      // Detectar pérdida de foco del input
+    sugerenciasList->installEventFilter(this);     // Detectar clics dentro de la lista
+
 
 
     QSettings settings("JcNews", "config");
@@ -299,7 +472,51 @@ void MainWindow::on_actualizarButton_clicked()
             // Asignar a los QDateTimeEdit
             ui->fechaInicio->setDateTime(minFecha);
             ui->fechaFin->setDateTime(maxFecha);
+
+            //llenar indice invertido
+            noticiasOriginales = doc.array();
+
+            // 🔁 A partir de aquí movemos todo el índice invertido
+            indiceInvertido.clear();
+
+            int totalNoticias = noticiasOriginales.size();
+            QString resumenDebug = QString("Total noticias: %1\n").arg(totalNoticias);
+
+            int i = 0;
+            for (const QJsonValue& value : noticiasOriginales) {
+                QJsonObject obj = value.toObject();
+                titulos.append(obj["titulo"].toString());
+
+                QString id = obj["id"].toString();
+                QString descripcion = obj["descripcion"].toString().toLower();
+
+                QStringList palabras = descripcion.split(QRegularExpression("[\\W_]+"), Qt::SkipEmptyParts);
+                QSet<QString> palabrasUnicas = QSet<QString>(palabras.begin(), palabras.end());
+
+                for (const QString& palabra : palabrasUnicas) {
+                    indiceInvertido[palabra].append(obj);
+                }
+
+                if (i < 3) {
+                    resumenDebug += QString("\nNoticia ID: %1\n").arg(id);
+                    resumenDebug += QString("Palabras únicas (%1): %2\n")
+                        .arg(palabrasUnicas.size())
+                        .arg(QStringList(QList<QString>(palabrasUnicas.begin(), palabrasUnicas.end())).join(", "));
+                }
+
+                ++i;
+            }
+
+            QMessageBox::information(this, "Debug Índice Invertido", resumenDebug);
+            QMessageBox::information(this, "Debug Titulos", titulos.join("\n"));
+            delete trie;
+            trie = new Trie();
+            for (const QString& titulo : titulos) {
+                trie->insert(titulo);
+            }
+
         }
+
 
         filtrarNoticias();
     });

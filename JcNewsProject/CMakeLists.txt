@@ -39,6 +39,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         btree.h btree.cpp
         resources.qrc
         styles.qrc
+        trie.h trie.cpp
 
     )
 # Define target properties for Android with Qt 6 as:

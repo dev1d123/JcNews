@@ -4,6 +4,9 @@
 #include <QString>
 #include <QMainWindow>
 #include <QJsonArray>
+
+#include "trie.h"         // Asegúrate de incluir tu clase Trie
+#include <QListWidget>
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -20,11 +23,22 @@ public:
 
 private slots:
     void on_actualizarButton_clicked();
+    void actualizarSugerencias(const QString& texto);
+    void seleccionarSugerencia(QListWidgetItem* item);
+
 private:
     Ui::MainWindow *ui;
     QJsonArray noticiasOriginales;
+    QMap<QString, QList<QJsonObject>> indiceInvertido;
     void filtrarNoticias();
+    void buscarPorTexto();
     QString clasificarTemaPorDescripcion(const QString& descripcion, const QMap<QString, QStringList>& palabrasClavePorTema);
     void limpiarOrdenamientosRadioButtons(); // ✅ Limpia todos los QRadioButton de ordenamiento
+    Trie* trie;
+    QListWidget* sugerenciasList;
+    void inicializarAutocompletado(); // Método para organizar la inicialización
+
+protected:
+    bool eventFilter(QObject* obj, QEvent* event) override;
 };
 #endif // MAINWINDOW_H
