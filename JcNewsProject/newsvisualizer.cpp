@@ -102,3 +102,6 @@ void NewsVisualizer::setTitulo(const QString& titulo)
 }
 
 
+
+
+

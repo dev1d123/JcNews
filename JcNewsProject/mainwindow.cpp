@@ -148,7 +148,7 @@ void MainWindow::buscarPorTexto()
     QString debugInfo = "Tokens buscados:\n";
 
     // Umbral mínimo de tokens que debe coincidir por noticia
-    int umbralMinimo = tokens.size() - 3;
+    int umbralMinimo = tokens.size() - 6;
     // Mapa para contar cuántos tokens coinciden por cada noticia
     QMap<QString, QPair<QJsonObject, int>> conteoCoincidencias;
 
@@ -489,7 +489,7 @@ void MainWindow::on_actualizarButton_clicked()
 
                 QString id = obj["id"].toString();
                 QString descripcion = obj["descripcion"].toString().toLower();
-
+                descripcion.append(" " + obj["titulo"].toString().toLower());
                 QStringList palabras = descripcion.split(QRegularExpression("[\\W_]+"), Qt::SkipEmptyParts);
                 QSet<QString> palabrasUnicas = QSet<QString>(palabras.begin(), palabras.end());
 
