@@ -38,5 +38,5 @@ def get_full_article(url):
         return content[:20000]
 
     except Exception as e:
-        print("Error al obtener", url, ":", str(e))
+        #print("Error al obtener", url, ":", str(e))
         return None, None

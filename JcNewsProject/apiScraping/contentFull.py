@@ -36,7 +36,7 @@ def get_full_article(url):
         return page_title, content[:20000]  # Limitar a 20k caracteres
     
     except Exception as e:
-        print(f"Error al obtener {url}: {str(e)}")
+        #print(f"Error al obtener {url}: {str(e)}")
         return None, None
 
 def guardar_noticia(article_data, existing_urls):
@@ -45,7 +45,7 @@ def guardar_noticia(article_data, existing_urls):
     
     # Verificar si ya existe
     if url in existing_urls:
-        print(f"Noticia ya existe: {article_data['title']}")
+        #print(f"Noticia ya existe: {article_data['title']}")
         return None
     
     # Obtener contenido completo
@@ -89,7 +89,7 @@ def procesar_api(news_api_url):
     data = response.json()
     
     if data['status'] != 'ok':
-        print("Error en la API:", data.get('message', 'Desconocido'))
+        #print("Error en la API:", data.get('message', 'Desconocido'))
         return
     
     # Cargar datos existentes
@@ -116,7 +116,7 @@ def procesar_api(news_api_url):
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(existing_data, f, ensure_ascii=False, indent=2)
     
-    print(f"Noticias nuevas agregadas: {nuevos}. Total en archivo: {len(existing_data)}")
+    #print(f"Noticias nuevas agregadas: {nuevos}. Total en archivo: {len(existing_data)}")
 
 if __name__ == "__main__":
     API_URL = "https://newsapi.org/v2/everything?q=fútbol&language=es&apiKey=03bdbb096ace4615a704708025189849"

@@ -50,17 +50,17 @@ def run_api_process(api_url_base, data_dir, max_articles=10):
             response.raise_for_status()
             data = response.json()
         except requests.RequestException as e:
-            print(f"Error al conectarse a la API: {e}")
+            #print(f"Error al conectarse a la API: {e}")
             break
 
         if data.get('status') != 'success':
-            print("API error:", data.get('message', 'Error desconocido'))
+            #print("API error:", data.get('message', 'Error desconocido'))
             break
 
         nuevos = process_articles(data, existing_data, existing_urls, data_dir)
         total_new += nuevos
 
-        print(f"Artículos nuevos procesados en esta página: {nuevos}")
+        #print(f"Artículos nuevos procesados en esta página: {nuevos}")
 
         next_page = data.get('nextPage')
         if not next_page:
@@ -68,18 +68,18 @@ def run_api_process(api_url_base, data_dir, max_articles=10):
 
     save_data(json_path, existing_data)
 
-    print("\n✅ Proceso finalizado.")
-    print(f"📰 Total de artículos nuevos agregados: {total_new}")
-    print(f"📁 Total acumulado en JSON: {len(existing_data)}")
+    #print("\n✅ Proceso finalizado.")
+    #print(f"📰 Total de artículos nuevos agregados: {total_new}")
+    #print(f"📁 Total acumulado en JSON: {len(existing_data)}")
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Uso: python main.py <directorio_destino>")
+        #print("Uso: python main.py <directorio_destino>")
         sys.exit(1)
 
     data_dir = sys.argv[1]
-    print(f"EJECUTANDO MAIN. Carpeta destino: {data_dir}")
+    #print(f"EJECUTANDO MAIN. Carpeta destino: {data_dir}")
 
     API_URL = f"https://newsdata.io/api/1/latest?apikey={API_KEY}&country=pe"
     run_api_process(API_URL, data_dir)

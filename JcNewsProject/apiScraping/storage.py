@@ -9,7 +9,7 @@ def save_article(article_data, existing_urls, data_dir):
         return None
 
     if url in existing_urls:
-        print(f"Noticia ya existe: {article_data.get('title', 'Sin título')}")
+        #print(f"Noticia ya existe: {article_data.get('title', 'Sin título')}")
         return None
 
     full_content = get_full_article(url)

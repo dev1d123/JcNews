@@ -248,9 +248,11 @@
       <height>61</height>
      </rect>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
     <property name="styleSheet">
      <string notr="true">font: 800 12pt &quot;Adwaita Sans&quot;;
-color: black;
 font-size: 50px;</string>
     </property>
     <property name="text">
@@ -509,20 +511,20 @@ font-size: 50px;</string>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>190</y>
+      <x>710</x>
+      <y>189</y>
       <width>70</width>
-      <height>19</height>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Fecha</string>
+     <string>Fecha  /</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>830</x>
+      <x>760</x>
       <y>190</y>
       <width>70</width>
       <height>19</height>
@@ -535,7 +537,7 @@ font-size: 50px;</string>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>980</x>
+      <x>930</x>
       <y>190</y>
       <width>70</width>
       <height>19</height>
@@ -578,7 +580,7 @@ font-size: 50px;</string>
      <x>0</x>
      <y>0</y>
      <width>1182</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuPrincipal">
