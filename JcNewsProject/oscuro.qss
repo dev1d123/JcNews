@@ -11,6 +11,7 @@ QPushButton {
     padding: 6px;
     border-radius: 4px;
     color: white;
+    font-weight: bold;
 }
 
 QPushButton:hover {
@@ -96,5 +97,35 @@ QLineEdit:focus {
 
 #tituloLabel {
     color: #F0F0F0  ;
+}
+
+/* Botón Actualizar */
+#actualizarButton {
+    background-color: #F0F0F0;
+    color: black;
+    border: 1px solid #4CAF50;
+    border-radius: 4px;
+}
+
+/* Hover Actualizar */
+#actualizarButton:hover {
+    background-color: #dcdcdc;
+    color: #1a1a1a;
+    border: 1px solid #66bb6a;
+}
+
+/* Botón News (Go) */
+#newsButton {
+    background-color: #F0F0F0;
+    color: black;
+    border: 1px solid #4CAF50;
+    border-radius: 4px;
+}
+
+/* Hover News */
+#newsButton:hover {
+    background-color: #F0F0F0;
+    color: #1a1a1a;
+    border: 1px solid #dcdcdc;
 }
 

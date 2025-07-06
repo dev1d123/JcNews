@@ -13,19 +13,6 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QPushButton" name="funcionamientoButton">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>100</y>
-     <width>171</width>
-     <height>151</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>img1</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="estadisticasButton">
    <property name="geometry">
     <rect>
@@ -35,8 +22,16 @@
      <height>151</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">image: url(:/new/prefix1/estadisticas.png);
+background-position: center;
+background-origin: content;
+height: 130px;
+width: 30px;
+background-color: #1a2228;      </string>
+   </property>
    <property name="text">
-    <string>img2</string>
+    <string/>
    </property>
   </widget>
   <widget class="QLabel" name="label1">
@@ -89,6 +84,33 @@
    </property>
    <property name="text">
     <string>Cerrar</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="funcionamientoButton">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>100</y>
+     <width>171</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>171</width>
+     <height>151</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">image: url(:/new/prefix1/funcion.png);
+background-position: center;
+background-origin: content;
+height: 130px;
+width: 30px;
+background-color: #1a2228;      </string>
+   </property>
+   <property name="text">
+    <string/>
    </property>
   </widget>
  </widget>

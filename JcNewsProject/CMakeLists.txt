@@ -40,6 +40,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         resources.qrc
         styles.qrc
         trie.h trie.cpp
+        img.qrc
 
     )
 # Define target properties for Android with Qt 6 as:

@@ -673,3 +673,16 @@ void MainWindow::filtrarNoticias()
 
     layout->addStretch();
 }
+
+void MainWindow::on_configuracionButton_clicked()
+{
+    // Prueba esto en tu código para verificar
+    QPixmap pix(":/new/img/funcion.png");
+    if(pix.isNull()) {
+        qDebug() << "Error: No se encontró la imagen";
+    } else {
+        ui->label->setPixmap(pix);
+        ui->label->setScaledContents(true); // Ajusta tamaño
+    }
+}
+

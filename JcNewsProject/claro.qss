@@ -12,12 +12,11 @@ QPushButton {
     padding: 6px;
     border-radius: 4px;
     color: white;
+    font-weight: bold;
 }
 
 QPushButton:hover {
     background-color: #66bb6a;
-    cursor: pointer;
-
 }
 
 /* Checkboxes */
@@ -96,7 +95,7 @@ QLineEdit:focus {
 }
 
 #tituloLabel {
-    color: #1a1a1a;  /* azul profundo, profesional */
+    color: #1a1a1a;
 }
 
 /* estilos para las cajas */
@@ -115,12 +114,19 @@ QLineEdit:focus {
 }
 
 /* estilo del boton "Go" */
-
 #newsButton {
     background-color: #1a1a1a;
 }
 
+
 /* estilos del boton Actualizar */
 #actualizarButton {
-    background-color: #1a1a1a;
+    background-color: #1a2228;
 }
+
+#newsButton,
+#actualizarButton:hover {
+    background-color: #26323b;
+    color: white;
+}
+
