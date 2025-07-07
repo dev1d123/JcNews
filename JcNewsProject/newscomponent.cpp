@@ -7,8 +7,7 @@ NewsComponent::NewsComponent(QWidget *parent)
     , ui(new Ui::NewsComponent)
 {
     ui->setupUi(this);
-
-    /*
+    ui->titleEdit->setAlignment(Qt::AlignCenter);    /*
      * CONEXION CON NEWSVISUALIZER
      */
     connect(ui->newsButton, &QPushButton::clicked, this, [this]() {

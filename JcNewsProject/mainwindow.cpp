@@ -2,6 +2,7 @@
 #include "newscomponent.h"
 #include "configuration.h"
 #include "./ui_mainwindow.h"
+#include "uploadnews.h"
 #include "preferences.h"
 #include "trie.h"
 #include <QProcess>
@@ -311,6 +312,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->filtrarButton, &QPushButton::clicked, this, [this]() {
         limpiarOrdenamientosRadioButtons();
     });
+
+    connect(ui->fakeButton, &QPushButton::clicked, this, [this]() {
+        UploadNews dlg(this);
+        dlg.exec();
+    });
+
     // Conexiones para ordenamiento al cambiar los radio buttons
     connect(ui->fechaArribaRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);
     connect(ui->fechaAbajoRadioB, &QRadioButton::toggled, this, &MainWindow::filtrarNoticias);

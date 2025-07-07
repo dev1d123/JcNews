@@ -130,3 +130,9 @@ QLineEdit:focus {
     color: white;
 }
 
+
+
+/*Estilos para el componente de la noticias */
+
+
+
