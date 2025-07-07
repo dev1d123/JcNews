@@ -26,6 +26,8 @@ private slots:
     void actualizarSugerencias(const QString& texto);
     void seleccionarSugerencia(QListWidgetItem* item);
 
+    void on_configuracionButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QJsonArray noticiasOriginales;

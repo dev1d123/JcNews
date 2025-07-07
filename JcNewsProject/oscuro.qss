@@ -4,13 +4,128 @@ QWidget {
     font-size: 10pt;
 }
 
+/* Botones */
 QPushButton {
-    background-color: #3c3f41;
-    border: 1px solid #555;
-    padding: 4px;
+    background-color: #4CAF50; /* verde */
+    border: 1px solid #388E3C;
+    padding: 6px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
 }
 
 QPushButton:hover {
-    background-color: #505354;
+    background-color: #66bb6a;
+}
+
+/* Checkboxes */
+QCheckBox {
+    spacing: 6px;
+}
+
+/* Casilla NO marcada */
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;               /* cuadrado con esquinas suavizadas */
+    border: 2px solid #ffffff;        /* borde blanco */
+    background-color: transparent;    /* fondo vacío */
+}
+
+/* Casilla marcada */
+QCheckBox::indicator:checked {
+    background-color: #4CAF50;        /* relleno verde */
+    border: 2px solid #ffffff;        /* borde blanco */
+}
+
+/* QComboBox principal */
+QComboBox {
+    background-color: #4CAF50;
+    color: #2b2b2b;
+    border: 1px solid #388E3C;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+/* Al pasar el mouse */
+QComboBox:hover {
+    background-color: #66BB6A;
+}
+
+/* Lista de elementos desplegables */
+QComboBox QAbstractItemView {
+    background-color: #4CAF50;
+    selection-background-color: #66BB6A;
+    selection-color: #2b2b2b;
+    border: 1px solid #388E3C;
+}
+
+/* Radio Buttons */
+QRadioButton::indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    border: 2px solid #ffffff;
+    background-color: transparent;
+}
+
+QRadioButton::indicator:checked {
+    border: 2px solid #ffffff;
+    background-color: #4CAF50;
+}
+
+
+/* barras de búsqueda */
+/* Estilo general de la barra de búsqueda */
+QLineEdit {
+    background-color: #3c3f41;
+    color: #ffffff;
+    border: 2px solid #888888;     /* borde gris por defecto */
+    padding: 4px;
+    border-radius: 4px;
+}
+
+/* Al hacer clic (cuando tiene foco) */
+QLineEdit:focus {
+    border: 2px solid #4CAF50;     /* borde verde al enfocar */
+    background-color: #454848;     /* opcional: oscurece un poco el fondo */
+}
+
+#imagenLabel {
+    background-color: #292a2d;
+}
+
+#tituloLabel {
+    color: #F0F0F0  ;
+}
+
+/* Botón Actualizar */
+#actualizarButton {
+    background-color: #F0F0F0;
+    color: black;
+    border: 1px solid #4CAF50;
+    border-radius: 4px;
+}
+
+/* Hover Actualizar */
+#actualizarButton:hover {
+    background-color: #dcdcdc;
+    color: #1a1a1a;
+    border: 1px solid #66bb6a;
+}
+
+/* Botón News (Go) */
+#newsButton {
+    background-color: #F0F0F0;
+    color: black;
+    border: 1px solid #4CAF50;
+    border-radius: 4px;
+}
+
+/* Hover News */
+#newsButton:hover {
+    background-color: #F0F0F0;
+    color: #1a1a1a;
+    border: 1px solid #dcdcdc;
 }
 
