@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>523</height>
+    <width>1208</width>
+    <height>705</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QLabel" name="tituloLabel">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>30</y>
+     <x>40</x>
+     <y>10</y>
      <width>151</width>
      <height>41</height>
     </rect>
@@ -29,40 +29,27 @@
   <widget class="QLabel" name="algoritmo1Label">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>60</x>
      <y>100</y>
-     <width>91</width>
+     <width>361</width>
      <height>19</height>
     </rect>
    </property>
    <property name="text">
-    <string>Algoritmo 1</string>
+    <string>Algoritmo 1: Deteccion por similitud</string>
    </property>
   </widget>
   <widget class="QLabel" name="algoritmo2Label">
    <property name="geometry">
     <rect>
-     <x>350</x>
+     <x>640</x>
      <y>100</y>
-     <width>91</width>
+     <width>281</width>
      <height>19</height>
     </rect>
    </property>
    <property name="text">
-    <string>Algoritmo 2</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="algoritmo3Label">
-   <property name="geometry">
-    <rect>
-     <x>590</x>
-     <y>100</y>
-     <width>91</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Algoritmo 3</string>
+    <string>Algoritmo 2: Deteccion por semejanza</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="resultado1Text">
@@ -70,8 +57,8 @@
     <rect>
      <x>40</x>
      <y>140</y>
-     <width>201</width>
-     <height>311</height>
+     <width>561</width>
+     <height>501</height>
     </rect>
    </property>
    <property name="html">
@@ -88,10 +75,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QTextEdit" name="resultado2Text">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>620</x>
      <y>140</y>
-     <width>201</width>
-     <height>311</height>
+     <width>541</width>
+     <height>501</height>
     </rect>
    </property>
    <property name="html">
@@ -105,37 +92,27 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Poner los resultados del algoritmo 2 (usar formato html)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QTextEdit" name="resultado3Text">
-   <property name="geometry">
-    <rect>
-     <x>540</x>
-     <y>140</y>
-     <width>201</width>
-     <height>311</height>
-    </rect>
-   </property>
-   <property name="html">
-    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-hr { height: 1px; border-width: 0; }
-li.unchecked::marker { content: &quot;\2610&quot;; }
-li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Adwaita Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Poner los resultados del algoritmo 3 (usar formato html)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="atrasButton">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>470</y>
+     <x>560</x>
+     <y>660</y>
      <width>96</width>
      <height>27</height>
     </rect>
    </property>
    <property name="text">
     <string>OK</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="titleEdit">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>10</y>
+     <width>701</width>
+     <height>41</height>
+    </rect>
    </property>
   </widget>
  </widget>

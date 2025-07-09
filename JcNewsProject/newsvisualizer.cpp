@@ -15,11 +15,7 @@ NewsVisualizer::NewsVisualizer(QWidget *parent)
 
     connect(ui->atrasButton, &QPushButton::clicked, this, &QDialog::reject);
 
-    // Conexión con FakeResults
-    connect(ui->fakeButton, &QPushButton::clicked, this, [this]() {
-        FakeResults dialog(this);
-        dialog.exec();
-    });
+
     connect(networkManager, &QNetworkAccessManager::finished, this, &NewsVisualizer::imagenDescargada);
 }
 

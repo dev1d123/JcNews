@@ -12,7 +12,8 @@
 #include <QDateTimeEdit>
 #include <QTextEdit>
 #include <QDialogButtonBox>
-
+#include <QSettings>
+#include "fakeresults.h"
 UploadNews::UploadNews(QWidget *parent)
     : QDialog(parent)
 {
@@ -124,9 +125,17 @@ void UploadNews::parseFile(const QString& fileName)
         contentEdit->setPlainText(content.trimmed());
     }
 }
-
 void UploadNews::showNewsInfo()
 {
+    // Guardar en QSettings
+    QSettings settings("JCNews", "FakeNew");
+    settings.setValue("news/title", titleLine->text());
+    settings.setValue("news/filepath", dirLine->text());
+    settings.setValue("news/from", fromTimeEdit->dateTime());
+    settings.setValue("news/to", toTimeEdit->dateTime());
+    settings.setValue("news/content", contentEdit->toPlainText());
+
+    // Opcional: mostrar info (para debug o confirmar)
     QString info;
     info += "Título: " + titleLine->text() + "\n";
     info += "Archivo: " + dirLine->text() + "\n";
@@ -134,5 +143,12 @@ void UploadNews::showNewsInfo()
     info += "Hasta: " + toTimeEdit->dateTime().toString("yyyy-MM-dd HH:mm") + "\n";
     info += "Contenido:\n" + contentEdit->toPlainText();
 
-    QMessageBox::information(this, "Información de la noticia", info);
+    QMessageBox::information(this, "Información guardada", "La noticia ha sido guardada correctamente.");
+
+    // Mostrar el componente FakeResults
+    FakeResults* fr = new FakeResults(this);
+    fr->exec();
+
+    // Cerrar este diálogo
+    this->accept();
 }
