@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::Statistics *ui;
+
+    void cargarEstadisticas();
 };
 
 #endif // STATISTICS_H
