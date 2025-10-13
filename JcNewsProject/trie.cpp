@@ -1,12 +1,9 @@
 #include "trie.h"
 
-TrieNode::TrieNode()
-    : isEndOfWord(false)
-{
-}
+TrieNode::TrieNode() : isEndOfWord(false) {}
 
 TrieNode::~TrieNode() {
-    qDeleteAll(children);
+    qDeleteAll(children); // libera recursivamente
 }
 
 Trie::Trie() {
@@ -14,7 +11,7 @@ Trie::Trie() {
 }
 
 Trie::~Trie() {
-    freeNode(root);
+    delete root; // esto llama recursivamente a ~TrieNode()
 }
 
 void Trie::insert(const QString& word) {
@@ -32,28 +29,20 @@ void Trie::insert(const QString& word) {
 void Trie::searchPrefix(const QString& prefix, QStringList& results, int maxResults) {
     TrieNode* node = root;
     for (const QChar& c : prefix) {
-        if (!node->children.contains(c)) {
+        if (!node->children.contains(c))
             return;
-        }
         node = node->children[c];
     }
     dfs(node, results, maxResults);
 }
 
 void Trie::dfs(TrieNode* node, QStringList& results, int maxResults) {
-    if (results.size() >= maxResults)
+    if (!node || results.size() >= maxResults)
         return;
 
     if (node->isEndOfWord)
         results.append(node->palabra);
 
-    for (auto it = node->children.begin(); it != node->children.end(); ++it) {
-        dfs(it.value(), results, maxResults);
-    }
-}
-
-void Trie::freeNode(TrieNode* node) {
-    if (!node) return;
-    qDeleteAll(node->children);
-    delete node;
+    for (TrieNode* child : node->children)
+        dfs(child, results, maxResults);
 }

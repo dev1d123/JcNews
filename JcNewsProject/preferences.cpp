@@ -13,7 +13,6 @@ Preferences::Preferences(QWidget *parent)
 
     // Cargar valores previos
     QSettings settings("JcNews", "config");
-
     QString rutaGuardada = settings.value("dir_news").toString();
     if (!rutaGuardada.isEmpty()) {
         ui->direccionLine->setText(rutaGuardada);

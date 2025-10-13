@@ -20,6 +20,17 @@
 #include <QRegularExpression>
 #include <QVector>
 #include <QMouseEvent>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QEventLoop>
+#include <QUrlQuery>
+#include <QUrl>
+#include <QDirIterator>
+#include <QCoreApplication>
+#include <QTextStream>
+#include <QFileInfo>
+#include <QTimer>
 
 QMap<QString, QList<QJsonObject>> indiceInvertido;
 
@@ -28,83 +39,83 @@ Trie* trie = new Trie();
 
 QMap<QString, QStringList> palabrasClavePorTema = {
     {"política", {
-        "gobierno", "presidente", "congreso", "ministro", "ministra", "elecciones", "partido", "política",
-        "democracia", "reforma", "voto", "parlamento", "asamblea", "diputado", "senador", "legislador",
-        "poder ejecutivo", "poder legislativo", "juramentación", "mandato", "campaña electoral", "candidato", "coalición"
-    }},
+                     "gobierno", "presidente", "congreso", "ministro", "ministra", "elecciones", "partido", "política",
+                     "democracia", "reforma", "voto", "parlamento", "asamblea", "diputado", "senador", "legislador",
+                     "poder ejecutivo", "poder legislativo", "juramentación", "mandato", "campaña electoral", "candidato", "coalición"
+                 }},
     {"economía", {
-        "economía", "inflación", "dólar", "euro", "banco", "finanzas", "mercado", "crédito", "interés",
-        "impuestos", "deuda", "negocio", "pib", "aranceles", "inversión", "bolsa", "recesión", "comercio",
-        "exportación", "importación", "ingresos", "egresos", "precio", "costos", "fmi", "tesoro", "subsidio"
-    }},
+                     "economía", "inflación", "dólar", "euro", "banco", "finanzas", "mercado", "crédito", "interés",
+                     "impuestos", "deuda", "negocio", "pib", "aranceles", "inversión", "bolsa", "recesión", "comercio",
+                     "exportación", "importación", "ingresos", "egresos", "precio", "costos", "fmi", "tesoro", "subsidio"
+                 }},
     {"salud", {
-        "hospital", "covid", "covid-19", "salud", "médico", "médica", "enfermedad", "vacuna", "oms",
-        "clínica", "paciente", "virus", "contagio", "enfermería", "medicina", "quirófano", "sintoma",
-        "tratamiento", "infección", "pandemia", "epidemia", "salubridad", "enfermero", "cura", "salud pública"
-    }},
+                  "hospital", "covid", "covid-19", "salud", "médico", "médica", "enfermedad", "vacuna", "oms",
+                  "clínica", "paciente", "virus", "contagio", "enfermería", "medicina", "quirófano", "sintoma",
+                  "tratamiento", "infección", "pandemia", "epidemia", "salubridad", "enfermero", "cura", "salud pública"
+              }},
     {"cultura", {
-        "arte", "cultura", "literatura", "cine", "película", "teatro", "museo", "exposición", "pintura",
-        "escultura", "historia", "poesía", "libro", "autor", "actor", "ballet", "obra", "festival",
-        "documental", "fotografía", "cultural", "narrativa", "ensayo", "folklore"
-    }},
+                    "arte", "cultura", "literatura", "cine", "película", "teatro", "museo", "exposición", "pintura",
+                    "escultura", "historia", "poesía", "libro", "autor", "actor", "ballet", "obra", "festival",
+                    "documental", "fotografía", "cultural", "narrativa", "ensayo", "folklore"
+                }},
     {"sociedad", {
-        "sociedad", "protesta", "manifestación", "violencia", "derechos", "comunidad", "familia",
-        "discriminación", "igualdad", "género", "inclusión", "marginación", "movilización",
-        "integración", "pobreza", "conflicto social", "colectivo", "ciudadanía", "juventud", "niñez"
-    }},
+                     "sociedad", "protesta", "manifestación", "violencia", "derechos", "comunidad", "familia",
+                     "discriminación", "igualdad", "género", "inclusión", "marginación", "movilización",
+                     "integración", "pobreza", "conflicto social", "colectivo", "ciudadanía", "juventud", "niñez"
+                 }},
     {"entretenimiento", {
-        "famoso", "celebridad", "espectáculo", "música", "actor", "actriz", "película", "serie",
-        "concierto", "premio", "show", "televisión", "streaming", "festival", "reality", "álbum",
-        "cantante", "hollywood", "celebración", "gala", "influencer", "paparazzi", "evento"
-    }},
+                            "famoso", "celebridad", "espectáculo", "música", "actor", "actriz", "película", "serie",
+                            "concierto", "premio", "show", "televisión", "streaming", "festival", "reality", "álbum",
+                            "cantante", "hollywood", "celebración", "gala", "influencer", "paparazzi", "evento"
+                        }},
     {"deportes", {
-        "fútbol", "gol", "liga", "partido", "mundial", "deporte", "jugador", "atleta", "selección",
-        "torneo", "campeonato", "copa", "olimpiadas", "competencia", "marcador", "entrenador",
-        "estadística", "cancha", "estadio", "penal", "balón", "equipo", "baloncesto", "tenis", "natación"
-    }},
+                     "fútbol", "gol", "liga", "partido", "mundial", "deporte", "jugador", "atleta", "selección",
+                     "torneo", "campeonato", "copa", "olimpiadas", "competencia", "marcador", "entrenador",
+                     "estadística", "cancha", "estadio", "penal", "balón", "equipo", "baloncesto", "tenis", "natación"
+                 }},
     {"tecnología", {
-        "tecnología", "smartphone", "aplicación", "app", "inteligencia artificial", "redes sociales",
-        "internet", "software", "hardware", "google", "microsoft", "apple", "código", "sistema",
-        "nube", "servidor", "datos", "seguridad informática", "criptografía", "algoritmo", "robot",
-        "gadget", "web", "startup", "tecnológico"
-    }},
+                       "tecnología", "smartphone", "aplicación", "app", "inteligencia artificial", "redes sociales",
+                       "internet", "software", "hardware", "google", "microsoft", "apple", "código", "sistema",
+                       "nube", "servidor", "datos", "seguridad informática", "criptografía", "algoritmo", "robot",
+                       "gadget", "web", "startup", "tecnológico"
+                   }},
     {"ciencia", {
-        "ciencia", "investigación", "experimento", "astronomía", "biología", "física", "química",
-        "universo", "planeta", "científico", "teoría", "descubrimiento", "laboratorio", "genética",
-        "evolución", "átomo", "materia", "celular", "espacio", "nasa", "cosmos", "microscopio", "neutrón"
-    }},
+                    "ciencia", "investigación", "experimento", "astronomía", "biología", "física", "química",
+                    "universo", "planeta", "científico", "teoría", "descubrimiento", "laboratorio", "genética",
+                    "evolución", "átomo", "materia", "celular", "espacio", "nasa", "cosmos", "microscopio", "neutrón"
+                }},
     {"medio ambiente", {
-        "medio ambiente", "cambio climático", "calentamiento global", "contaminación", "reciclaje",
-        "ecología", "bosque", "energía", "renovable", "sostenibilidad", "naturaleza", "biodiversidad",
-        "verde", "emisiones", "carbono", "deforestación", "eco", "planeta", "agua", "residuos",
-        "incendios forestales", "especies"
-    }},
+                           "medio ambiente", "cambio climático", "calentamiento global", "contaminación", "reciclaje",
+                           "ecología", "bosque", "energía", "renovable", "sostenibilidad", "naturaleza", "biodiversidad",
+                           "verde", "emisiones", "carbono", "deforestación", "eco", "planeta", "agua", "residuos",
+                           "incendios forestales", "especies"
+                       }},
     {"educación", {
-        "escuela", "educación", "estudiante", "alumno", "profesor", "universidad", "colegio", "beca",
-        "clases", "aprendizaje", "currículo", "docente", "aula", "formación", "maestro", "enseñanza",
-        "evaluación", "tutoría", "nota", "académico", "examen"
-    }},
+                      "escuela", "educación", "estudiante", "alumno", "profesor", "universidad", "colegio", "beca",
+                      "clases", "aprendizaje", "currículo", "docente", "aula", "formación", "maestro", "enseñanza",
+                      "evaluación", "tutoría", "nota", "académico", "examen"
+                  }},
     {"moda", {
-        "moda", "ropa", "tendencia", "pasarela", "vestido", "diseño", "modelo", "estilo", "colección",
-        "fashion", "desfile", "ropa de lujo", "prenda", "accesorio", "marca", "diseñador"
-    }},
+                 "moda", "ropa", "tendencia", "pasarela", "vestido", "diseño", "modelo", "estilo", "colección",
+                 "fashion", "desfile", "ropa de lujo", "prenda", "accesorio", "marca", "diseñador"
+             }},
     {"crimen", {
-        "crimen", "delito", "asesinato", "robo", "policía", "investigación", "justicia", "homicidio",
-        "fiscalía", "criminal", "violación", "secuestro", "narcotráfico", "violencia", "arma", "detención"
-    }},
+                   "crimen", "delito", "asesinato", "robo", "policía", "investigación", "justicia", "homicidio",
+                   "fiscalía", "criminal", "violación", "secuestro", "narcotráfico", "violencia", "arma", "detención"
+               }},
     {"viajes", {
-        "viaje", "turismo", "hotel", "destino", "aeropuerto", "vacaciones", "avión", "reserva",
-        "turista", "maleta", "crucero", "agencia", "hospedaje", "tour", "itinerario"
-    }},
+                   "viaje", "turismo", "hotel", "destino", "aeropuerto", "vacaciones", "avión", "reserva",
+                   "turista", "maleta", "crucero", "agencia", "hospedaje", "tour", "itinerario"
+               }},
     {"clima", {
-        "clima", "lluvia", "tormenta", "temperatura", "frío", "calor", "viento", "nieve", "huracán",
-        "sequía", "inundación", "granizo", "alerta meteorológica", "pronóstico", "climático"
-    }},
+                  "clima", "lluvia", "tormenta", "temperatura", "frío", "calor", "viento", "nieve", "huracán",
+                  "sequía", "inundación", "granizo", "alerta meteorológica", "pronóstico", "climático"
+              }},
     {"negocios", {
-        "empresa", "negocio", "emprendimiento", "start-up", "mercado", "cliente", "producto", "venta",
-        "CEO", "marca", "inversión", "negociación", "oferta", "demanda", "facturación", "beneficio",
-        "estrategia", "franquicia", "comercial", "alianza", "sociedad", "corporativo"
-    }}
+                     "empresa", "negocio", "emprendimiento", "start-up", "mercado", "cliente", "producto", "venta",
+                     "CEO", "marca", "inversión", "negociación", "oferta", "demanda", "facturación", "beneficio",
+                     "estrategia", "franquicia", "comercial", "alianza", "sociedad", "corporativo"
+                 }}
 };
 
 QString MainWindow::clasificarTemaPorDescripcion(const QString& descripcion, const QMap<QString, QStringList>& palabrasClavePorTema)
@@ -133,6 +144,217 @@ QString MainWindow::clasificarTemaPorDescripcion(const QString& descripcion, con
     //umbral para el tema
     return (maxConteo >= 2) ? mejorTema : "";
 }
+
+// ----------------- Helpers para integración con API y archivos -----------------
+
+static QString sanitizeFilenameFromUrl(const QString& url) {
+    // QUrl to remove scheme and keep host+path+query minimally, then percent-encode
+    QUrl u(url);
+    QString cleaned;
+    if (!u.host().isEmpty()) {
+        cleaned = u.host() + u.path();
+        if (!u.query().isEmpty()) cleaned += "?" + u.query();
+    } else {
+        // fallback: remove scheme by regex
+        cleaned = url;
+        cleaned.remove(QRegularExpression("^https?://"));
+    }
+    QByteArray encoded = QUrl::toPercentEncoding(cleaned);
+    QString name = QString::fromUtf8(encoded);
+    if (name.length() > 150) name = name.left(150);
+    // remove trailing dots or slashes
+    name.replace('/', "%2F");
+    name.replace('\\', "%5C");
+    return name + ".txt";
+}
+
+static QJsonArray loadNoticiasFromJsonFile(const QString& jsonPath) {
+    QJsonArray result;
+    QFile file(jsonPath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return result;
+    }
+    QByteArray jsonData = file.readAll();
+    file.close();
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
+    if (parseError.error != QJsonParseError::NoError) {
+        qWarning() << "Error parsing JSON" << parseError.errorString();
+        return result;
+    }
+    if (doc.isArray()) result = doc.array();
+    return result;
+}
+
+static QJsonArray loadNoticiasFromTxtFiles(const QString& dirPath) {
+    QJsonArray arr;
+    QDir dir(dirPath);
+    if (!dir.exists()) return arr;
+
+    QDirIterator it(dirPath, QStringList() << "*.txt", QDir::Files, QDirIterator::NoIteratorFlags);
+    while (it.hasNext()) {
+        QString filePath = it.next();
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) continue;
+        QTextStream in(&file);
+        QString titulo, fuente, url, fecha;
+        QString line;
+        QString content;
+        bool afterSeparator = false;
+        while (!in.atEnd()) {
+            line = in.readLine();
+            if (!afterSeparator) {
+                if (line.startsWith("Título:")) {
+                    titulo = line.mid(QString("Título:").length()).trimmed();
+                } else if (line.startsWith("Fuente:")) {
+                    fuente = line.mid(QString("Fuente:").length()).trimmed();
+                } else if (line.startsWith("URL:")) {
+                    url = line.mid(QString("URL:").length()).trimmed();
+                } else if (line.startsWith("Fecha:")) {
+                    fecha = line.mid(QString("Fecha:").length()).trimmed();
+                } else if (line.startsWith("---")) {
+                    afterSeparator = true;
+                }
+            } else {
+                content += line + "\n";
+            }
+        }
+        file.close();
+        QJsonObject obj;
+        obj["id"] = url.isEmpty() ? QFileInfo(filePath).fileName() : url;
+        obj["titulo"] = titulo;
+        obj["fuente"] = fuente;
+        obj["autor"] = QJsonValue::Null;
+        obj["fecha"] = fecha;
+        obj["url"] = url;
+        obj["url_imagen"] = QJsonValue::Null;
+        obj["ruta_contenido"] = content.trimmed();
+        obj["descripcion"] = content.left(300); // small description
+        obj["fecha_procesamiento"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+        obj["temas"] = QJsonArray(); // vacío
+        obj["prioridad"] = "0";
+        arr.append(obj);
+    }
+    return arr;
+}
+
+static bool saveApiArticlesToDir(const QJsonArray& articles, const QString& dirPath) {
+    QDir dir(dirPath);
+    if (!dir.exists()) {
+        if (!dir.mkpath(dirPath)) {
+            qWarning() << "No se pudo crear carpeta:" << dirPath;
+            return false;
+        }
+    }
+
+    QJsonArray metaArray;
+    for (const QJsonValue& v : articles) {
+        if (!v.isObject()) continue;
+        QJsonObject a = v.toObject();
+
+        QString title = a.value("titulo").toString(a.value("title").toString());
+        if (title.isEmpty()) title = a.value("title").toString();
+        QString fuente = a.value("fuente").toString(a.value("source_name").toString());
+        QString url = a.value("url").toString(a.value("link").toString());
+        QString fecha = a.value("fecha").toString(a.value("pubDate").toString());
+        QString contenido = a.value("ruta_contenido").toString(); // our API provides texto completo aquí
+        if (contenido.isEmpty()) {
+            // fallback to description if ruta_contenido missing
+            contenido = a.value("descripcion").toString();
+        }
+
+        // Build filename and write file
+        QString filename = sanitizeFilenameFromUrl(url.isEmpty() ? title : url);
+        QString filePath = QDir(dirPath).filePath(filename);
+
+        QFile f(filePath);
+        if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qWarning() << "No se pudo escribir archivo:" << filePath;
+            continue;
+        }
+        QTextStream out(&f);
+        out.setEncoding(QStringConverter::Utf8);
+        out << "Título: " << title << "\n";
+        out << "Fuente: " << fuente << "\n";
+        out << "URL: " << url << "\n";
+        out << "Fecha: " << fecha << "\n";
+        out << "---\n";
+        out << contenido << "\n";
+        f.close();
+
+        // Build metadata object to save in metadatos_noticias.json
+        QJsonObject meta;
+        meta["id"] = url.isEmpty() ? filename : url;
+        meta["titulo"] = title;
+        meta["fuente"] = fuente;
+        // try to keep autor if present
+        if (a.contains("autor")) meta["autor"] = a.value("autor");
+        else if (a.contains("creator") && a.value("creator").isArray()) {
+            QJsonArray creators = a.value("creator").toArray();
+            meta["autor"] = creators.isEmpty() ? QJsonValue::Null : creators.first();
+        } else meta["autor"] = QJsonValue::Null;
+        meta["fecha"] = fecha;
+        meta["url"] = url;
+        meta["url_imagen"] = a.value("url_imagen");
+        meta["ruta_contenido"] = filePath; // keep path like previous standard
+        meta["descripcion"] = a.value("descripcion");
+        meta["fecha_procesamiento"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+        if (a.contains("temas")) meta["temas"] = a.value("temas");
+        else meta["temas"] = QJsonArray();
+        meta["prioridad"] = a.value("prioridad").toString("0");
+        metaArray.append(meta);
+    }
+
+    // Save metadatos_noticias.json
+    QString jsonPath = QDir(dirPath).filePath("metadatos_noticias.json");
+    QFile jf(jsonPath);
+    if (!jf.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "No se pudo escribir metadatos:" << jsonPath;
+        return false;
+    }
+    QJsonDocument doc(metaArray);
+    jf.write(doc.toJson(QJsonDocument::Indented));
+    jf.close();
+    return true;
+}
+static QJsonArray fetchArticlesFromLocalApi(const QString& apiBaseUrl, int count) {
+    static QNetworkAccessManager mgr;
+
+    // Construir la URL con los parámetros
+    QUrl url(apiBaseUrl);
+    QUrlQuery q;
+    q.addQueryItem("count", QString::number(count));
+    url.setQuery(q);
+
+    // Preparar la solicitud
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    // Ejecutar la solicitud síncronamente (bloqueante)
+    QNetworkReply* reply = mgr.get(req);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();  // Esperar a que termine la solicitud
+
+    // Leer la respuesta
+    QByteArray resp = reply->readAll();
+    reply->deleteLater();
+
+    // Parsear JSON
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(resp, &err);
+    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
+        return {};
+    }
+
+    QJsonObject obj = doc.object();
+    return obj.value("articles").toArray();
+}
+
+
+
+// ----------------- End helpers -----------------
 
 void MainWindow::buscarPorTexto()
 {
@@ -172,8 +394,8 @@ void MainWindow::buscarPorTexto()
     }
 
     debugInfo += QString("\nTotal noticias encontradas (umbral >= %1): %2")
-                    .arg(umbralMinimo)
-                    .arg(resultados.size());
+                     .arg(umbralMinimo)
+                     .arg(resultados.size());
 
     QMessageBox::information(this, "Debug Búsqueda", debugInfo);
 
@@ -357,8 +579,8 @@ MainWindow::MainWindow(QWidget *parent)
     QString fuente = settings.value("fuente", "Fuente 1").toString();
 
     QString rutaTema = (tema == "oscuro")
-        ? ":/styles/oscuro.qss"
-        : ":/styles/claro.qss";
+                           ? ":/styles/oscuro.qss"
+                           : ":/styles/claro.qss";
 
     QString rutaFuente = ":/styles/font1.qss";
     if (fuente == "Fuente 2") rutaFuente = ":/styles/font2.qss";
@@ -395,7 +617,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actualizarButton_clicked()
 {
-    QString scriptPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../../apiScraping/main.py");
+    // Nueva lógica:
+    // 1) obtener dir_news desde settings
+    // 2) primero leer noticias existentes (metadatos_noticias.json si existe; sino .txt)
+    // 3) poblar UI con esas noticias
+    // 4) si el usuario confirma ejecutar actualización -> llamar al API local http://127.0.0.1:5000/articles?count=30
+    //    -> guardar los resultados en dir_news como archivos .txt siguiendo el estándar mostrado
+    //    -> guardar metadatos_noticias.json y recargar UI
+
     QSettings settings("JcNews", "config");
     QString rutaGuardada = settings.value("dir_news").toString();
 
@@ -404,129 +633,184 @@ void MainWindow::on_actualizarButton_clicked()
         return;
     }
 
-    QMessageBox::information(this, "Ejecución", "Ejecutando script:\n" + scriptPath + "\nCon destino:\n" + rutaGuardada);
+    // -------------- 2) Leer noticias existentes ----------------
+    QString jsonPath = QDir(rutaGuardada).filePath("metadatos_noticias.json");
+    QJsonArray loadedArray;
+    if (QFile::exists(jsonPath)) {
+        loadedArray = loadNoticiasFromJsonFile(jsonPath);
+    } else {
+        // si no hay JSON, intentar cargar .txt individuales
+        loadedArray = loadNoticiasFromTxtFiles(rutaGuardada);
+    }
 
-    QProcess* process = new QProcess(this);
-    process->start("python", QStringList() << scriptPath << rutaGuardada);
+    noticiasOriginales = loadedArray;
 
-    connect(process, &QProcess::readyReadStandardOutput, [process, this]() {
-        QString output = process->readAllStandardOutput();
-        if (!output.trimmed().isEmpty()) {
-            QMessageBox::information(this, "Salida estándar", output);
-        }
-    });
+    // Setear las fuentes para el combobox
+    QSet<QString> fuentesUnicas;
+    for (const QJsonValue& value : noticiasOriginales) {
+        fuentesUnicas << value.toObject()["fuente"].toString();
+    }
+    ui->fuenteBox->clear();
+    ui->fuenteBox->addItem("Todas");
+    for (const QString& fuente : fuentesUnicas) {
+        ui->fuenteBox->addItem(fuente);
+    }
 
-    connect(process, &QProcess::readyReadStandardError, [process, this]() {
-        QString errors = process->readAllStandardError();
-        if (!errors.trimmed().isEmpty()) {
-            QMessageBox::critical(this, "Error", errors);
-        }
-    });
+    // Establecer fecha más antigua y más reciente
+    if (!noticiasOriginales.isEmpty()) {
+        QDateTime minFecha = QDateTime::currentDateTime();
+        QDateTime maxFecha = QDateTime::fromSecsSinceEpoch(0); // muy antigua
 
-    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            [this, process, rutaGuardada](int exitCode, QProcess::ExitStatus exitStatus) {
-        QMessageBox::information(this, "Finalizado",
-                                 "Código de salida: " + QString::number(exitCode) +
-                                 "\nEstado: " + (exitStatus == QProcess::NormalExit ? "Normal" : "Crash"));
-        process->deleteLater();
-
-        QDateTime now = QDateTime::currentDateTime();
-        ui->actualizarLine->setText(now.toString("dd/MM/yyyy hh:mm:ss"));
-
-        QString jsonPath = QDir(rutaGuardada).filePath("metadatos_noticias.json");
-        QFile file(jsonPath);
-        if (!file.open(QIODevice::ReadOnly)) {
-            std::cerr << "No se pudo abrir el archivo JSON: " << jsonPath.toStdString() << std::endl;
-            return;
-        }
-
-        QByteArray jsonData = file.readAll();
-        file.close();
-
-        QJsonParseError parseError;
-        QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
-        if (parseError.error != QJsonParseError::NoError) {
-            std::cerr << "Error al parsear JSON: " << parseError.errorString().toStdString() << std::endl;
-            return;
-        }
-
-        noticiasOriginales = doc.array();
-
-        // Setear las fuentes para el combobox
-        QSet<QString> fuentesUnicas;
         for (const QJsonValue& value : noticiasOriginales) {
-            fuentesUnicas << value.toObject()["fuente"].toString();
+            QJsonObject obj = value.toObject();
+            QDateTime fecha = QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate);
+            if (fecha.isValid()) {
+                if (fecha < minFecha) minFecha = fecha;
+                if (fecha > maxFecha) maxFecha = fecha;
+            }
         }
-        ui->fuenteBox->clear();
-        ui->fuenteBox->addItem("Todas");
-        for (const QString& fuente : fuentesUnicas) {
-            ui->fuenteBox->addItem(fuente);
-        }
-        // Establecer fecha más antigua y más reciente
-        if (!noticiasOriginales.isEmpty()) {
-            QDateTime minFecha = QDateTime::currentDateTime();
-            QDateTime maxFecha = QDateTime::fromSecsSinceEpoch(0); // muy antigua
 
-            for (const QJsonValue& value : noticiasOriginales) {
-                QJsonObject obj = value.toObject();
-                QDateTime fecha = QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate);
-                if (fecha.isValid()) {
-                    if (fecha < minFecha) minFecha = fecha;
-                    if (fecha > maxFecha) maxFecha = fecha;
-                }
+        // Asignar a los QDateTimeEdit
+        ui->fechaInicio->setDateTime(minFecha);
+        ui->fechaFin->setDateTime(maxFecha);
+
+        //llenar indice invertido
+        indiceInvertido.clear();
+
+        int totalNoticias = noticiasOriginales.size();
+        QString resumenDebug = QString("Total noticias: %1\n").arg(totalNoticias);
+
+        int i = 0;
+        for (const QJsonValue& value : noticiasOriginales) {
+            QJsonObject obj = value.toObject();
+            titulos.append(obj["titulo"].toString());
+
+            QString id = obj["id"].toString();
+            QString descripcion = obj["descripcion"].toString().toLower();
+            descripcion.append(" " + obj["titulo"].toString().toLower());
+            QStringList palabras = descripcion.split(QRegularExpression("[\\W_]+"), Qt::SkipEmptyParts);
+            QSet<QString> palabrasUnicas = QSet<QString>(palabras.begin(), palabras.end());
+
+            for (const QString& palabra : palabrasUnicas) {
+                indiceInvertido[palabra].append(obj);
             }
 
-            // Asignar a los QDateTimeEdit
-            ui->fechaInicio->setDateTime(minFecha);
-            ui->fechaFin->setDateTime(maxFecha);
-
-            //llenar indice invertido
-            noticiasOriginales = doc.array();
-
-            // 🔁 A partir de aquí movemos todo el índice invertido
-            indiceInvertido.clear();
-
-            int totalNoticias = noticiasOriginales.size();
-            QString resumenDebug = QString("Total noticias: %1\n").arg(totalNoticias);
-
-            int i = 0;
-            for (const QJsonValue& value : noticiasOriginales) {
-                QJsonObject obj = value.toObject();
-                titulos.append(obj["titulo"].toString());
-
-                QString id = obj["id"].toString();
-                QString descripcion = obj["descripcion"].toString().toLower();
-                descripcion.append(" " + obj["titulo"].toString().toLower());
-                QStringList palabras = descripcion.split(QRegularExpression("[\\W_]+"), Qt::SkipEmptyParts);
-                QSet<QString> palabrasUnicas = QSet<QString>(palabras.begin(), palabras.end());
-
-                for (const QString& palabra : palabrasUnicas) {
-                    indiceInvertido[palabra].append(obj);
-                }
-
-                if (i < 3) {
-                    resumenDebug += QString("\nNoticia ID: %1\n").arg(id);
-                    resumenDebug += QString("Palabras únicas (%1): %2\n")
-                        .arg(palabrasUnicas.size())
-                        .arg(QStringList(QList<QString>(palabrasUnicas.begin(), palabrasUnicas.end())).join(", "));
-                }
-
-                ++i;
+            if (i < 3) {
+                resumenDebug += QString("\nNoticia ID: %1\n").arg(id);
+                resumenDebug += QString("Palabras únicas (%1): %2\n")
+                                    .arg(palabrasUnicas.size())
+                                    .arg(QStringList(QList<QString>(palabrasUnicas.begin(), palabrasUnicas.end())).join(", "));
             }
 
-            QMessageBox::information(this, "Debug Índice Invertido", resumenDebug);
-            QMessageBox::information(this, "Debug Titulos", titulos.join("\n"));
+            ++i;
+        }
+
+        QMessageBox::information(this, "Debug Índice Invertido", resumenDebug);
+        QMessageBox::information(this, "Debug Titulos", titulos.join("\n"));
+        delete trie;
+        trie = new Trie();
+        for (const QString& titulo : titulos) {
+            trie->insert(titulo);
+        }
+    } else {
+        QMessageBox::information(this, "Noticias", "No se encontraron noticias en la carpeta especificada.");
+    }
+
+    // Siempre mostrar las noticias cargadas inicialmente
+    filtrarNoticias();
+
+    // -------------- 4) Preguntar al usuario si desea actualizar (llamar a la API) -------------
+    auto resp = QMessageBox::question(this, "Actualizar desde API",
+                                      "¿Deseas llamar al servicio local (http://127.0.0.1:5000) para traer hasta 30 noticias y guardarlas en la carpeta configurada?",
+                                      QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (resp != QMessageBox::Yes) {
+        return;
+    }
+
+    QString apiBase = "http://127.0.0.1:5000/articles";
+    QJsonArray apiArticles = fetchArticlesFromLocalApi(apiBase, 30);
+    QString jsonText = QString::fromUtf8(QJsonDocument(apiArticles).toJson(QJsonDocument::Indented));
+    QMessageBox::information(this, "Artículos recibidos", jsonText);
+
+
+    if (apiArticles.isEmpty()) {
+        QMessageBox::warning(this, "API", "No se obtuvieron artículos desde la API local o hubo un error.");
+        return;
+    }
+
+    // Guardar resultados en dir_news como .txt y generar metadatos_noticias.json
+    bool ok = saveApiArticlesToDir(apiArticles, rutaGuardada);
+    if (!ok) {
+        QMessageBox::warning(this, "Guardar archivos", "Hubo un error guardando los artículos en la carpeta.");
+        return;
+    }
+
+    // Recargar metadatos y UI desde el JSON recién guardado
+    QJsonArray reloaded = loadNoticiasFromJsonFile(QDir(rutaGuardada).filePath("metadatos_noticias.json"));
+    noticiasOriginales = reloaded;
+
+    // actualizar combobox de fuentes y fechas como antes
+    QSet<QString> fuentesUnicas2;
+    for (const QJsonValue& value : noticiasOriginales) {
+        fuentesUnicas2 << value.toObject()["fuente"].toString();
+    }
+    ui->fuenteBox->clear();
+    ui->fuenteBox->addItem("Todas");
+    for (const QString& fuente : fuentesUnicas2) {
+        ui->fuenteBox->addItem(fuente);
+    }
+
+    if (!noticiasOriginales.isEmpty()) {
+        QDateTime minFecha = QDateTime::currentDateTime();
+        QDateTime maxFecha = QDateTime::fromSecsSinceEpoch(0); // muy antigua
+
+        for (const QJsonValue& value : noticiasOriginales) {
+            QJsonObject obj = value.toObject();
+            QDateTime fecha = QDateTime::fromString(obj["fecha"].toString(), Qt::ISODate);
+            if (fecha.isValid()) {
+                if (fecha < minFecha) minFecha = fecha;
+                if (fecha > maxFecha) maxFecha = fecha;
+            }
+        }
+
+        ui->fechaInicio->setDateTime(minFecha);
+        ui->fechaFin->setDateTime(maxFecha);
+
+        // reconstruir indice invertido y trie
+        indiceInvertido.clear();
+        titulos.clear();
+        int i = 0;
+        QString resumenDebug = QString("Total noticias (post-API): %1\n").arg(noticiasOriginales.size());
+        for (const QJsonValue& value : noticiasOriginales) {
+            QJsonObject obj = value.toObject();
+            titulos.append(obj["titulo"].toString());
+            QString descripcion = obj["descripcion"].toString().toLower();
+            descripcion.append(" " + obj["titulo"].toString().toLower());
+            QStringList palabras = descripcion.split(QRegularExpression("[\\W_]+"), Qt::SkipEmptyParts);
+            QSet<QString> palabrasUnicas = QSet<QString>(palabras.begin(), palabras.end());
+            for (const QString& palabra : palabrasUnicas) {
+                indiceInvertido[palabra].append(obj);
+            }
+            if (i < 3) {
+                resumenDebug += obj["id"].toString() + "\n";
+            }
+            ++i;
+        }
+
+        QMessageBox::information(this, "Debug Índice (post-API)", resumenDebug);
+        if (trie) {
             delete trie;
-            trie = new Trie();
-            for (const QString& titulo : titulos) {
-                trie->insert(titulo);
-            }
-
+            trie = nullptr;
         }
+        trie = new Trie();
 
 
-        filtrarNoticias();
-    });
+        for (const QString& t : titulos) trie->insert(t);
+    }
+
+    // refrescar la vista
+
+    filtrarNoticias();
 }
 
 void MainWindow::filtrarNoticias()
@@ -620,10 +904,23 @@ void MainWindow::filtrarNoticias()
             }
         }
 
-        if (!coincide && !incluirOtros) continue;
-        if (!temasSeleccionados.isEmpty() && !coincide && incluirOtros) continue;
+        // Si "Otros" está marcado → mostrar todas las noticias
+        if (incluirOtros) {
+            noticiasFiltradas.append(obj);
+            continue;
+        }
 
-        noticiasFiltradas.append(obj);
+        // Si no hay temas seleccionados → no filtrar por tema
+        if (temasSeleccionados.isEmpty()) {
+            noticiasFiltradas.append(obj);
+            continue;
+        }
+
+        // Si hay temas seleccionados, mantener solo las que coinciden
+        if (coincide) {
+            noticiasFiltradas.append(obj);
+        }
+
     }
 
     // 6. Ordenamiento
@@ -692,4 +989,3 @@ void MainWindow::on_configuracionButton_clicked()
         ui->label->setScaledContents(true); // Ajusta tamaño
     }
 }
-
